@@ -1,4 +1,3 @@
-// router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import HomeView from '@/views/HomeView.vue';
@@ -6,6 +5,7 @@ import AboutView from '@/views/AboutView.vue';
 import UploadJobView from '@/views/UploadJobView.vue';
 import UploadResumeView from '@/views/UploadResumeView.vue';
 import ProfileView from '@/views/ProfileView.vue';
+import RecruiterDashboardView from '@/views/RecruiterDashboardView.vue';
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -13,6 +13,7 @@ const routes = [
   { path: '/upload-job', name: 'upload-job', component: UploadJobView, meta: { requiresAuth: true, requiredRole: 'recruiter' } },
   { path: '/upload-resume', name: 'upload-resume', component: UploadResumeView, meta: { requiresAuth: true, requiredRole: 'jobseeker' } },
   { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
+  { path: '/recruiter-dashboard', component: RecruiterDashboardView, meta: { requiresAuth: true, requiredRole : 'recruiter'}}
 ];
 
 const router = createRouter({

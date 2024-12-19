@@ -5,22 +5,35 @@
 
       <div class="input-group">
         <label for="title">Job Title</label>
-        <input type="text" id="title" v-model="job.title" placeholder="Enter job title" required>
+        <input type="text" id="title" v-model="job.title" placeholder="Enter job title" required />
       </div>
 
       <div class="input-group">
         <label for="description">Enter Description</label>
-        <textarea id="description" v-model="job.description" placeholder="Enter job description"></textarea>
+        <textarea
+          id="description"
+          v-model="job.description"
+          placeholder="Enter job description"
+        ></textarea>
       </div>
 
       <div class="input-group">
         <label for="location">Enter Job Location</label>
-        <textarea id="location" v-model="job.location" placeholder="format: City, Country"></textarea>
+        <textarea
+          id="location"
+          v-model="job.location"
+          placeholder="format: City, Country"
+        ></textarea>
       </div>
 
       <div class="input-group">
         <label for="education">Education Requirements</label>
-        <input type="text" v-model="educationInput" @keydown.enter.prevent="addEducation" placeholder="Add an education requirement and press Enter" />
+        <input
+          type="text"
+          v-model="educationInput"
+          @keydown.enter.prevent="addEducation"
+          placeholder="Add an education requirement and press Enter"
+        />
         <ul>
           <li v-for="(edu, index) in job.education" :key="index">
             {{ edu }}
@@ -31,7 +44,12 @@
 
       <div class="input-group">
         <label for="languages">Languages</label>
-        <input type="text" v-model="languageInput" @keydown.enter.prevent="addLanguage" placeholder="Add a language and press Enter" />
+        <input
+          type="text"
+          v-model="languageInput"
+          @keydown.enter.prevent="addLanguage"
+          placeholder="Add a language and press Enter"
+        />
         <ul class="tag-list">
           <li v-for="(language, index) in job.languages" :key="index" class="tag">
             {{ language }}
@@ -42,7 +60,12 @@
 
       <div class="input-group">
         <label for="skills">Soft Skills</label>
-        <input type="text" v-model="skillInput" @keydown.enter.prevent="addSkill" placeholder="Add a skill and press Enter" />
+        <input
+          type="text"
+          v-model="skillInput"
+          @keydown.enter.prevent="addSkill"
+          placeholder="Add a skill and press Enter"
+        />
         <ul class="tag-list">
           <li v-for="(skill, index) in job.skills" :key="index" class="tag">
             {{ skill }}
@@ -53,7 +76,12 @@
 
       <div class="input-group">
         <label for="experiences">Hard Skills</label>
-        <input type="text" v-model="experienceInput" @keydown.enter.prevent="addExperience" placeholder="Add a skill and press Enter" />
+        <input
+          type="text"
+          v-model="experienceInput"
+          @keydown.enter.prevent="addExperience"
+          placeholder="Add a skill and press Enter"
+        />
         <ul class="tag-list">
           <li v-for="(experience, index) in job.experiences" :key="index" class="tag">
             {{ experience }}
@@ -64,33 +92,25 @@
 
       <div class="input-group">
         <label for="toApply">Contact</label>
-        <input type="text" id="toApply" v-model="job.toApply" placeholder="Contact" required>
+        <input
+          type="text"
+          id="toApply"
+          v-model="job.toApply"
+          placeholder="Contact"
+          required
+        />
       </div>
 
       <button type="submit" class="submit-button">Submit</button>
     </form>
-    <!---
-    <div class="content" v-if="resumes.length">
-      <h3>Top Matching Resumes for {{ job.title }}</h3>
-      <ul>
-        <li v-for=" in resumes" :key=".id">
-          <ResumeComponent :resume="" />
-        </li>
-      </ul>
-    </div>
-	---->
   </div>
 </template>
 
 <script>
-//import ResumeComponent from '@/components/ResumeComponent.vue';
 import { useJobPostStore } from '@/store/jobpostStore.js';
 
 export default {
   name: 'UploadJobView',
-  components: {
-    //ResumeComponent,
-  },
   data() {
     return {
       job: {
@@ -158,42 +178,31 @@ export default {
           toApply: this.job.toApply,
         };
 
-        // Map education, languages, skills, and experiences to requirements
         this.job.education.forEach((edu) => {
           jobPostData.requirements.push({ type: 'EDUCATION', description: edu });
         });
-        this.job.languages.forEach((lang) =>
-          jobPostData.requirements.push({ type: 'LANGUAGE', description: lang })
-        );
-        this.job.skills.forEach((skill) =>
-          jobPostData.requirements.push({ type: 'SKILL', description: skill })
-        );
-        this.job.experiences.forEach((exp) =>
-          jobPostData.requirements.push({ type: 'EXPERIENCE', description: exp })
-        );
+        this.job.languages.forEach((lang) => {
+          jobPostData.requirements.push({ type: 'LANGUAGE', description: lang });
+        });
+        this.job.skills.forEach((skill) => {
+          jobPostData.requirements.push({ type: 'SKILL', description: skill });
+        });
+        this.job.experiences.forEach((exp) => {
+          jobPostData.requirements.push({ type: 'EXPERIENCE', description: exp });
+        });
 
-        // Send job post data to backend
         const response = await jobPostStore.addJobPost(jobPostData);
 
-        // Add more specific error checking
         if (response) {
-          // Potentially add the new job post to the store
           jobPostStore.jobPosts.push(response);
-          
-          // Clear the form
           this.resetForm();
-          
-          // Optionally, show a success message
           alert('Job post created successfully!');
         }
       } catch (error) {
-        // More descriptive error handling
         console.error('Error in job submission:', error);
-        alert(`Failed to create job post: ${error.message}`);
+        this.submissionError = `Failed to create job post: ${error.message}`;
       }
     },
-
-    // Add a method to reset the form
     resetForm() {
       this.job = {
         title: '',
@@ -209,7 +218,7 @@ export default {
       this.languageInput = '';
       this.skillInput = '';
       this.experienceInput = '';
-    }
+    },
   },
 };
 </script>
@@ -310,20 +319,28 @@ export default {
 
 .add-button:hover,
 .remove-button:hover {
-  background-color: #623180;
+  background-color: #62367D;
 }
 
 .submit-button {
   width: 100%;
   background-color: #845AA4;
   color: white;
+  padding: 10px 15px;
+  font-size: 16px;
   border: none;
-  padding: 12px;
-  cursor: pointer;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .submit-button:hover {
-  background-color: #623180;
+  background-color: #62367D;
 }
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+}
+
 </style>
