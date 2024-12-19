@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Upload Testing Suite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .sql-query {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 3px solid #007bff;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resume Upload Testing Suite</h1>
+
+    <!-- Test Setup Section -->
+    <div class="section">
+        <h2>1. Test Setup</h2>
+        <div class="form-group">
+            <label>Create Test JobSeeker:</label>
+            <div class="sql-query">
+                INSERT INTO jobseeker (email, password, first_name, last_name, location) 
+                VALUES ('test@example.com', 'password123', 'Test', 'User', 'New York');
+            </div>
+            <button onclick="copySetupSQL()">Copy SQL</button>
+        </div>
+    </div>
+
+    <!-- Upload Test Section -->
+    <div class="section">
+        <h2>2. Resume Upload Test</h2>
+        <div class="form-group">
+            <label for="jobSeekerId">JobSeeker ID:</label>
+            <input type="number" id="jobSeekerId" value="1">
+        </div>
+        <div class="form-group">
+            <label for="resumeFile">Select Resume (PDF):</label>
+            <input type="file" id="resumeFile" accept=".pdf">
+        </div>
+        <button onclick="uploadResume()">Upload Resume</button>
+        <div id="uploadResponse" class="response"></div>
+    </div>
+
+    <!-- Verification Section -->
+    <div class="section">
+        <h2>3. Verification Queries</h2>
+        <div class="form-group">
+            <label>Check Resume Record:</label>
+            <div class="sql-query">
+                SELECT * FROM resume WHERE id = [last_inserted_id];
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Check Experiences:</label>
+            <div class="sql-query">
+                SELECT e.id, e.type, e.description, r.id as resume_id 
+                FROM experience e 
+                JOIN resume r ON e.resume_id = r.id 
+                WHERE r.id = [last_inserted_id];
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Check JobSeeker Update:</label>
+            <div class="sql-query">
+                SELECT j.id, j.email, j.location, r.id as resume_id 
+                FROM jobseeker j 
+                LEFT JOIN resume r ON j.resume_id = r.id 
+                WHERE j.id = [your_jobseeker_id];
+            </div>
+        </div>
+        <button onclick="copyVerificationSQL()">Copy All Queries</button>
+    </div>
+
+    <script>
+		async function uploadResume() {
+		    const jobSeekerId = document.getElementById('jobSeekerId').value;
+		    const file = document.getElementById('resumeFile').files[0];
+		    const responseDiv = document.getElementById('uploadResponse');
+		    
+		    if (!file) {
+		        responseDiv.innerHTML = '<div class="test-result error">Please select a file</div>';
+		        return;
+		    }
+		    
+		    const formData = new FormData();
+		    formData.append('file', file);
+		    
+		    try {
+		        // Use string interpolation to insert jobSeekerId into the URL
+		        const response = await fetch(`/api/resume/upload/${jobSeekerId}`, {
+		            method: 'POST',
+		            body: formData
+		        });
+
+		        // Check Content-Type for JSON response
+		        const contentType = response.headers.get("content-type");
+		        if (contentType && contentType.includes("application/json")) {
+		            const result = await response.json();
+		            responseDiv.innerHTML = `
+		                <h3>Response Status: ${response.status}</h3>
+		                <pre>${JSON.stringify(result, null, 2)}</pre>`;
+		        } else {
+		            const text = await response.text(); // Fallback for non-JSON responses
+		            responseDiv.innerHTML = `
+		                <h3>Response Status: ${response.status}</h3>
+		                <pre>${text}</pre>`;
+		        }
+		    } catch (error) {
+		        console.error('Error:', error);
+		        responseDiv.innerHTML = 'Error: ' + error.message;
+		    }
+		}
+        function copySetupSQL() {
+            const sql = `INSERT INTO jobseeker (email, password, first_name, last_name, location) 
+VALUES ('test@example.com', 'password123', 'Test', 'User', 'New York');`;
+            navigator.clipboard.writeText(sql);
+            alert('SQL copied to clipboard!');
+        }
+
+        function copyVerificationSQL() {
+            const sql = `-- Check Resume Record
+SELECT * FROM resume WHERE id = [last_inserted_id];
+
+-- Check Experiences
+SELECT e.id, e.type, e.description, r.id as resume_id 
+FROM experience e 
+JOIN resume r ON e.resume_id = r.id 
+WHERE r.id = [last_inserted_id];
+
+-- Check JobSeeker Update
+SELECT j.id, j.email, j.location, r.id as resume_id 
+FROM jobseeker j 
+LEFT JOIN resume r ON j.resume_id = r.id 
+WHERE j.id = [your_jobseeker_id];`;
+            navigator.clipboard.writeText(sql);
+            alert('SQL queries copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
