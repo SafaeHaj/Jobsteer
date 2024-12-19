@@ -34,10 +34,10 @@
           @keydown.enter.prevent="addEducation"
           placeholder="Add an education requirement and press Enter"
         />
-        <ul>
-          <li v-for="(edu, index) in job.education" :key="index">
+        <ul class="tag-list">
+          <li v-for="(edu, index) in job.education" :key="index" class="tag">
             {{ edu }}
-            <button @click="removeEducation(index)">x</button>
+            <button class="delete-button" @click="removeEducation(index)">x</button>
           </li>
         </ul>
       </div>
@@ -53,7 +53,7 @@
         <ul class="tag-list">
           <li v-for="(language, index) in job.languages" :key="index" class="tag">
             {{ language }}
-            <button type="button" class="delete-button" @click="removeLanguage(index)">x</button>
+            <button class="delete-button" @click="removeLanguage(index)">x</button>
           </li>
         </ul>
       </div>
@@ -108,7 +108,7 @@
 
 <script>
 import { useJobPostStore } from '@/store/jobpostStore.js';
-
+import { useUserStore } from '@/store/user';
 export default {
   name: 'UploadJobView',
   data() {
@@ -129,6 +129,12 @@ export default {
       experienceInput: '',
     };
   },
+  computed: {
+      user() {
+        const userStore = useUserStore();
+        return userStore.user;
+      }
+    },
   methods: {
     addEducation() {
       if (this.educationInput.trim()) {
@@ -172,6 +178,7 @@ export default {
       try {
         const jobPostData = {
           title: this.job.title,
+          recruiterId: this.user.id,
           location: this.job.location,
           requirements: [],
           description: this.job.description,

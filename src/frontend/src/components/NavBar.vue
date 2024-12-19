@@ -7,7 +7,7 @@
     <div class="navlinks-main">
       <router-link to="/" class="navlink">Home</router-link>
       <router-link v-if="isLoggedIn && user.role=='jobseeker'" to="/upload-resume" class="navlink">Upload Resume</router-link>
-      <router-link v-else-if="isLoggedIn && user.role=='recruiter'" to="/upload-job" class="navlink">Upload Job</router-link>
+      <router-link v-else-if="isLoggedIn && user.role=='recruiter'" to="/recruiter-dashboard" class="navlink">Upload Job</router-link>
     </div>
     <div class="navlinks-side">
       <button v-if="!isLoggedIn" class="nav-button login" @click="showLoginModal = true">Login</button>

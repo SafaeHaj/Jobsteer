@@ -1,16 +1,14 @@
 <template>
     <div class="min-h-screen bg-gray-50 p-8">
       <div class="max-w-6xl mx-auto grid grid-cols-2 gap-8">
-        <!-- Left Column: Job Posts List -->
         <div class="space-y-6">
-          <h2 class="text-3xl font-bold text-gray-800">Job Posts for Recruiter {{ recruiterId }}</h2>
+          <h2 class="text-3xl font-bold text-gray-800">Job Posts for {{ user.companyName }}</h2>
           <p class="text-gray-600">Manage your recruitment listings</p>
   
           <div v-if="jobPosts.length === 0" class="text-center py-12">
             <p class="text-gray-600 text-lg">No job posts found for this recruiter.</p>
           </div>
   
-          <!-- Job Posts List -->
           <div v-else>
             <div v-for="job in jobPosts" 
                  :key="job.id"
@@ -42,7 +40,6 @@
           </div>
         </div>
   
-        <!-- Right Column: Buttons for Refresh & Create Job Post -->
         <div class="flex flex-col gap-6">
           <button 
             @click="fetchJobPosts"
@@ -57,7 +54,6 @@
             Create Job Post
           </button>
   
-          <!-- Job Post Form -->
           <div v-if="showJobPostForm">
             <UploadJobView @job-post-created="onJobPostCreated" />
           </div>
@@ -67,8 +63,9 @@
   </template>
   
   <script>
-  import axios from 'axios';
   import UploadJobView from './UploadJobView.vue';
+  import { useUserStore } from '@/store/user.js';
+  import { useJobPostStore } from '@/store/jobpostStore.js';
   
   export default {
     name: 'RecruiterDashboard',
@@ -77,44 +74,17 @@
     },
     data() {
       return {
-        recruiterId: 1,
         jobPosts: [],
         showJobPostForm: false,
       };
     },
+    computed: {
+      user() {
+        const userStore = useUserStore();
+        return userStore.user;
+      }
+    },
     methods: {
-      fetchJobPosts() {
-        axios.get(`http://localhost:8080/api/jobpost/recruiter/${this.recruiterId}`)
-          .then(response => {
-            this.jobPosts = response.data;
-          })
-          .catch(error => {
-            console.error("There was an error fetching the job posts:", error);
-          });
-      },
-      fetchBestCandidates(jobPostId) {
-        axios.get(`http://localhost:8080/api/jobpost/${jobPostId}/best-candidates`)
-          .then(response => {
-            console.log("Best candidates:", response.data);
-            alert(`Best candidates for job ${jobPostId}: ${JSON.stringify(response.data)}`);
-          })
-          .catch(error => {
-            console.error("There was an error fetching best candidates:", error);
-          });
-      },
-      deleteJobPost(jobPostId) {
-        if (confirm("Are you sure you want to delete this job post?")) {
-          axios.delete(`http://localhost:8080/api/jobpost/${jobPostId}`)
-            .then(() => {
-              this.jobPosts = this.jobPosts.filter(job => job.id !== jobPostId);
-              alert("Job post deleted successfully.");
-            })
-            .catch(error => {
-              console.error("There was an error deleting the job post:", error);
-              alert("There was an error deleting the job post.");
-            });
-        }
-      },
       toggleJobPostForm() {
         this.showJobPostForm = !this.showJobPostForm;
       },
@@ -124,21 +94,20 @@
       }
     },
     created() {
-      this.fetchJobPosts();
+        const jobpostStore = useJobPostStore();
+        jobpostStore.fetchJobPosts();
     },
   };
   </script>
   <style scoped>
-  /* Global Styles */
   body {
-    font-family: 'Inter', sans-serif; /* Clean modern font */
+    font-family: 'Inter', sans-serif; 
     margin: 0;
     padding: 0;
-    background-color: #faf5ff; /* Subtle violet background */
-    color: #4a4a4a; /* Darker text for contrast */
+    background-color: #faf5ff; 
+    color: #4a4a4a; 
   }
   
-  /* Container for the whole view */
   .min-h-screen {
     min-height: 100vh;
   }
