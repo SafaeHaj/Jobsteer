@@ -25,7 +25,6 @@ public class Requirement{
 	@Column
 	private String description;
 	
-
 	@ManyToOne
 	@JoinColumn(name = "jobpost")
 	private JobPost jobPost;

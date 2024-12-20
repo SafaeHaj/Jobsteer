@@ -66,22 +66,20 @@
   import UploadJobView from './UploadJobView.vue';
   import { useUserStore } from '@/store/user.js';
   import { useJobPostStore } from '@/store/jobpostStore.js';
-  
+
   export default {
     name: 'RecruiterDashboard',
     components: {
       UploadJobView
     },
-    data() {
-      return {
-        jobPosts: [],
-        showJobPostForm: false,
-      };
-    },
     computed: {
       user() {
         const userStore = useUserStore();
         return userStore.user;
+      },
+      jobPosts() {
+        const jobpostStore = useJobPostStore();
+        return jobpostStore.jobPosts; // Directly bind to the store's state
       }
     },
     methods: {
@@ -89,16 +87,21 @@
         this.showJobPostForm = !this.showJobPostForm;
       },
       onJobPostCreated(newJobPost) {
-        this.jobPosts.push(newJobPost);
+        const jobpostStore = useJobPostStore();
+        jobpostStore.addJobPost(newJobPost); // Add to the store
         this.showJobPostForm = false;
+      },
+      fetchJobPosts() {
+        const jobpostStore = useJobPostStore();
+        jobpostStore.fetchJobPosts(); // Trigger fetching from the store
       }
     },
     created() {
-        const jobpostStore = useJobPostStore();
-        jobpostStore.fetchJobPosts();
+      this.fetchJobPosts(); // Fetch job posts on component creation
     },
   };
   </script>
+
   <style scoped>
   body {
     font-family: 'Inter', sans-serif; 

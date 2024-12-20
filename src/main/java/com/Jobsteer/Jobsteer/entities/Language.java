@@ -1,8 +1,7 @@
 package com.Jobsteer.Jobsteer.entities;
 import java.util.Locale;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.io.Serializable;
 
@@ -17,7 +16,7 @@ public class Language implements Serializable {
     private String language; 
 
     @ManyToOne
-	@JsonManagedReference
+    @JsonBackReference
     @JoinColumn(name = "resume_id",  referencedColumnName = "id",nullable = false)
     private Resume resume;
 

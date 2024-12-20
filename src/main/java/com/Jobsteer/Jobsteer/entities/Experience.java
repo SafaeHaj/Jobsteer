@@ -1,6 +1,6 @@
 package com.Jobsteer.Jobsteer.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -20,7 +20,7 @@ public class Experience {
     private String description;
 
     @ManyToOne
-    @JsonManagedReference
+    @JsonBackReference
     @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 
