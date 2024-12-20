@@ -8,28 +8,21 @@
         <div class="job-right-column">
             <h4 class="candidate-title">Best Candidates:</h4>
             <ul class="candidate-list">
-                <li v-for="(candidate, index) in candidates" :key="index" class="candidate-item">
-                    <div class="candidate-header">
-                        <h5>{{ candidate.candidate_name }}</h5>
-                        <p><strong>Email:</strong> {{ candidate.candidate_email }}</p>
-                        <p><strong>Location:</strong> {{ candidate.candidate_location }}</p>
-                        <p><strong>Total Score:</strong> {{ candidate.total_score.toFixed(4) }}</p>
-                    </div>
-                    <h6>Experiences:</h6>
-                    <ul class="experience-list">
-                        <li v-for="(experience, idx) in candidate.experiences" :key="idx">{{ experience.description }}</li>
-                    </ul>
-                </li>
+                <CandidateComponent v-for="candidate in candidates" :key="candidate.resume_id" :candidate="candidate" />
             </ul>
         </div>
     </div>
 </template>
 
 <script>
+import CandidateComponent from '@/components/CandidateComponent.vue';
 import { useJobPostStore } from '@/store/jobpostStore';
 
 export default {
     name: 'JobDetailView',
+    components: {
+        CandidateComponent
+    },
     data() {
         return {
             jobPostStore: useJobPostStore(),
@@ -43,11 +36,6 @@ export default {
         candidates() {
             return this.jobPostStore.candidates[this.jobId] || [];
         },
-    },
-    mounted() {
-        if (!this.jobPostStore.candidates[this.jobId]) {
-            this.jobPostStore.fetchBestCandidates(this.jobId);
-        }
     }
 };
 </script>
