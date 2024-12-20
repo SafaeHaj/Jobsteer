@@ -34,8 +34,6 @@
   </div>
 </template>
 
-
-
 <script>
 import UploadJobForm from '@/components/UploadJobForm.vue';
 import RecruiterJobComponent from '@/components/RecruiterJobComponent.vue';

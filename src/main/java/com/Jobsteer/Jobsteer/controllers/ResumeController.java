@@ -80,99 +80,6 @@ public class ResumeController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    //@PostMapping("/resume/upload/{jobSeekerId}")
-    public ResponseEntity<?> uploadResume1(
-            @PathVariable("jobSeekerId") Long jobSeekerId,
-            @RequestParam("file") MultipartFile file) {
-        
-        logger.info("Starting resume upload for jobSeeker: {}", jobSeekerId);
-        
-        try {
-            // Convert file to bytes
-            logger.info("Converting file to bytes: {}", file.getOriginalFilename());
-            byte[] fileBytes = file.getBytes();
-            
-            // Find JobSeeker
-            logger.info("Looking for JobSeeker with ID: {}", jobSeekerId);
-            Optional<JobSeeker> jobSeekerOpt = jobSeekerRepo.findById(jobSeekerId);
-            if (!jobSeekerOpt.isPresent()) {
-                logger.error("JobSeeker not found with ID: {}", jobSeekerId);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of(
-                        "status", "error",
-                        "message", "JobSeeker with id: " + jobSeekerId + " not found"
-                    ));
-            }
-            JobSeeker jobSeeker = jobSeekerOpt.get();
-            logger.info("Found JobSeeker: {}", jobSeeker.getEmail());
-
-            // Parse resume using Python service
-            logger.info("Sending file to Python service for parsing");
-            Map<String, Object> parsedData = uploadService.uploadAndParseResume(file);
-            logger.info("Received parsed data from Python service");
-
-            // Create new Resume
-            Resume resume = new Resume();
-            resume.setSourceFile(fileBytes);
-            resume.setJobSeeker(jobSeeker);
-
-            // Process each experience type
-            String[] experienceTypes = {"education", "work", "project", "extra"};
-            ExperienceType[] mappedTypes = {
-                ExperienceType.EDUCATION, 
-                ExperienceType.WORK, 
-                ExperienceType.PROJECT, 
-                ExperienceType.EXTRA
-            };
-
-            for (int i = 0; i < experienceTypes.length; i++) {
-                String type = experienceTypes[i];
-                if (parsedData.containsKey(type)) {
-                    List<Map<String, String>> experiences = (List<Map<String, String>>) parsedData.get(type);
-                    logger.info("Processing {} experiences: {} found", type, experiences.size());
-                    
-                    for (Map<String, String> exp : experiences) {
-                        if (exp.get("description") != null && !exp.get("description").trim().isEmpty()) {
-                            Experience experience = new Experience();
-                            experience.setType(mappedTypes[i]);
-                            experience.setDescription(exp.get("description"));
-                            resume.addExperience(experience);
-                        }
-                    }
-                }
-            }
-
-            // Save resume
-            logger.info("Saving resume to database");
-            resume = resumeRepo.save(resume);
-            logger.info("Resume saved with ID: {}", resume.getId());
-
-            // Update JobSeeker
-            logger.info("Updating JobSeeker with new resume");
-            jobSeeker.uploadCv(resume);
-            jobSeekerRepo.save(jobSeeker);
-            logger.info("JobSeeker updated successfully");
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("status", "success");
-            response.put("message", "Resume uploaded successfully");
-            response.put("resumeId", resume.getId());
-            response.put("parsedData", parsedData);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error processing resume: ", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                    "status", "error",
-                    "message", "Failed to process resume: " + e.getMessage()
-                ));
-        }
-    }
-
-    
     
     @PostMapping("/resume/upload/{jobSeekerId}")
     public ResponseEntity<?> uploadResume(
@@ -182,7 +89,6 @@ public class ResumeController {
         logger.info("Starting resume upload for jobSeeker: {}", jobSeekerId);
         
         try {
-            // Find JobSeeker
             Optional<JobSeeker> jobSeekerOpt = jobSeekerRepo.findById(jobSeekerId);
             if (!jobSeekerOpt.isPresent()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -224,8 +130,6 @@ public class ResumeController {
                         }
                     }
                 }
-                
-                // Save updated resume
                 Resume updatedResume = resumeRepo.save(existingResume);
                 
                 return ResponseEntity.ok(Map.of(
@@ -236,7 +140,6 @@ public class ResumeController {
                 ));
                 
             } else {
-                // Create new Resume if none exists
                 byte[] fileBytes = file.getBytes();
                 Map<String, Object> parsedData = uploadService.uploadAndParseResume(file);
                 
@@ -244,7 +147,6 @@ public class ResumeController {
                 newResume.setSourceFile(fileBytes);
                 newResume.setJobSeeker(jobSeeker);
                 
-                // Process experiences
                 String[] experienceTypes = {"education", "work", "project", "extra"};
                 ExperienceType[] mappedTypes = {
                     ExperienceType.EDUCATION, 
@@ -269,10 +171,8 @@ public class ResumeController {
                     }
                 }
                 
-                // Save new resume
                 Resume savedResume = resumeRepo.save(newResume);
                 
-                // Update JobSeeker
                 jobSeeker.uploadCv(savedResume);
                 jobSeekerRepo.save(jobSeeker);
                 
@@ -292,11 +192,7 @@ public class ResumeController {
                     "message", "Failed to process resume: " + e.getMessage()
                 ));
         }
-    }
-    
-    
-    
-    
+    }    
 
     @PostMapping("/api/resume/delete/{id}")
     public ResponseEntity<?> deleteResume(@PathVariable int id) {

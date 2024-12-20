@@ -12,7 +12,7 @@
         <p class="location" v-if="job.job_location">
             📍 {{ job.job_location }}
         </p>
-        <p class="location" v-if="job.job_location">
+        <p class="location" v-if="job.job_toApply">
               {{ job.job_toApply }}
         </p>
         <div class="match-details">
@@ -33,9 +33,6 @@
                     </li>
                 </ul>
             </div>
-            <button class="apply-btn" v-if="job.job_toApply">
-                Apply Now
-            </button>
         </div>
     </div>
 </template>

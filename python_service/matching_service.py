@@ -63,7 +63,7 @@ class MatchingService:
             req_type = req.get('type')
             req_desc = req.get('description', '').lower()
             
-            if req_type == 'EXPERINCE':  # Note: keeping the typo as it's in your enum
+            if req_type == 'EXPERIENCE':  
                 work_experiences = [exp.get('description', '') for exp in experiences if exp.get('type') == 'WORK']
                 if work_experiences:
                     max_score = max((self.calculate_text_similarity(req_desc, exp) for exp in work_experiences))
@@ -192,7 +192,7 @@ def match_jobs():
         }), 500
         
         
-@app.route('/match-resumes', methods=['POST'])
+@app.route('/match-candidates', methods=['POST'])
 def match_resumes():
     """Endpoint to match resumes to a job post"""
     try:

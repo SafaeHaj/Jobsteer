@@ -42,7 +42,10 @@ export default {
 
 .modal-content {
   overflow-y: scroll;
+  background: #fff;
   max-height: 80vh;
+  padding:20px 40px;
+  border-radius: 20px;
 }
 
 .modal-content::-webkit-scrollbar {
@@ -54,7 +57,6 @@ export default {
   scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
-/* Close Button */
 .close-button {
     position: absolute;
     top: 10px;
