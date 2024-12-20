@@ -8,7 +8,11 @@ import com.Jobsteer.Jobsteer.entities.JobPost;
 import com.Jobsteer.Jobsteer.entities.Recruiter;
 import com.Jobsteer.Jobsteer.entities.Requirement;
 import com.Jobsteer.Jobsteer.entities.RequirementType;
+import com.Jobsteer.Jobsteer.exceptions.EntityNotFoundException;
 import com.Jobsteer.Jobsteer.repositories.JobPostRepository;
+import com.Jobsteer.Jobsteer.repositories.RecruiterRepository;
+
+import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,23 +23,23 @@ public class JobPostService {
 
     @Autowired
     private JobPostRepository jobPostRepository;
+    
+    @Autowired
+    private RecruiterRepository recruiterRepository;
 
-    public JobPost createJobPost(JobPostRequest request, Long recruiterId) {
-        // 1. Create and populate JobPost
+    public JobPost createJobPost(JobPostRequest request) {
         JobPost jobPost = new JobPost();
         jobPost.setTitle(request.getTitle());
         jobPost.setLocation(request.getLocation());
         jobPost.setDescription(request.getDescription());
         jobPost.setToApply(request.getToApply());
 
-        // Initialize Recruiter and set ID
-        Recruiter recruiter = new Recruiter();
-        recruiter.setId(recruiterId);
-        jobPost.setRecruiter(recruiter); // Link Recruiter to JobPost
+        Long recruiterId = request.getRecruiterId();
+        Recruiter recruiter = recruiterRepository.findById(recruiterId).get();
+        
+        jobPost.setRecruiter(recruiter); 
+        jobPost.setSource(null); 
 
-        jobPost.setSource(null); // Optional: null for now
-
-        // 2. Convert Requirements and link them
         ArrayList<Requirement> requirements = (ArrayList<Requirement>) request.getRequirements().stream()
                 .map(req -> {
                     Requirement requirement = new Requirement();
@@ -44,12 +48,23 @@ public class JobPostService {
                     requirement.setJobPost(jobPost);
                     return requirement;
                 }).collect(Collectors.toList());
-
+        
         jobPost.setRequirements(requirements);
 
-        // 3. Save JobPost (cascades to requirements)
         return jobPostRepository.save(jobPost);
     }
 
-}
+    public List<JobPost> findByRecruiterId(Long recruiterId) {
+        return jobPostRepository.findByRecruiterId(recruiterId);
+    }
+    
+    @Transactional
+    public void deleteJobPost(Long jobPostId) {
+        if (jobPostRepository.existsById(jobPostId)) {
+            jobPostRepository.deleteById(jobPostId); 
+        } else {
+            throw new EntityNotFoundException("Job post not found with id: " + jobPostId);
+        }
+    }
 
+}

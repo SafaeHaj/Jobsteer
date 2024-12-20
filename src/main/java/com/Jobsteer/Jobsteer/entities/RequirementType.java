@@ -1,7 +1,7 @@
 package com.Jobsteer.Jobsteer.entities;
 
 public enum RequirementType {
-	EXPERINCE,
+	EXPERIENCE,
 	EDUCATION,
 	SKILL,
 	LANGUAGE

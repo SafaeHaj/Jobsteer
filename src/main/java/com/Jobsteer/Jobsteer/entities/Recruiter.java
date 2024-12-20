@@ -7,6 +7,8 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Data
 @Entity
 public class Recruiter extends User {
@@ -22,7 +24,8 @@ public class Recruiter extends User {
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "recruiter")
-    private List<JobPost> jobPostings = new ArrayList<>();
+	@JsonManagedReference
+	private List<JobPost> jobPostings = new ArrayList<>();
 
     public void postJob(JobPost jobPosting) {
         jobPosting.setRecruiter(this);

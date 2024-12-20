@@ -3,31 +3,34 @@ package com.Jobsteer.Jobsteer.dto;
 import java.util.List;
 
 public class JobPostRequest {
-    private String title;
-    private String location;
-    private String description;
-    private String toApply;
-    private List<RequirementRequest> requirements;
+	private String title;
+	private Long recruiterId;
+	private String location;
+	private String description;
+	private String toApply;
+	private List<RequirementRequest> requirements;
 
-    // Inner class for Requirement DTO
-    public static class RequirementRequest {
-        private String type; // EDUCATION, LANGUAGE, SKILL, EXPERIENCE
-        private String description;
+	public static class RequirementRequest {
+		private String type; // EDUCATION, LANGUAGE, SKILL, EXPERINCE
+		private String description;
+
 		public String getType() {
 			return type;
 		}
+
 		public void setType(String type) {
 			this.type = type;
 		}
+
 		public String getDescription() {
 			return description;
 		}
+
 		public void setDescription(String description) {
 			this.description = description;
 		}
 
-        
-    }
+	}
 
 	public String getTitle() {
 		return title;
@@ -69,6 +72,8 @@ public class JobPostRequest {
 		this.requirements = requirements;
 	}
 
-    
-}
+	public Long getRecruiterId() {
+		return recruiterId;
+	}
 
+}
