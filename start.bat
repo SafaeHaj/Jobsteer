@@ -8,6 +8,7 @@ start /d "%~dp0" cmd /c "mvn spring-boot:run"
 echo Starting Python backend...
 start /d "%~dp0python_service" cmd /c "python app.py"
 start /d "%~dp0python_service" cmd /c "python matching_service.py"
+start /d "%~dp0python_service" cmd /c "python app1.py"
 
 :: Check and start Vue.js frontend in parallel
 echo Checking if vue-cli-service is installed...

@@ -12,5 +12,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, Integer> {
     List<JobPost> findByRecruiterId(Long recruiterId);
     void deleteById(Long jobPostId);
     boolean existsById(Long id);
+    void deleteBySource(String source);
 
 }

@@ -174,8 +174,6 @@ public class ResumeController {
 
     
     
-    
-    
     @PostMapping("/resume/upload/{jobSeekerId}")
     public ResponseEntity<?> uploadResume(
             @PathVariable("jobSeekerId") Long jobSeekerId,

@@ -32,7 +32,7 @@ public class JobPost {
 	private String location;
     
 	@OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Requirement> requirements;
+	private List<Requirement> requirements= new ArrayList<>();
     
 	@ManyToOne
     private Recruiter recruiter;
@@ -79,6 +79,13 @@ public class JobPost {
 		this.toApply = toApply;
 	}
 
+	
+    public void addRequirement(Requirement requirement) {
+        requirement.setJobPost(this);
+        this.requirements.add(requirement);
+    }
+    
+    
 	public String getTitle() {
 		return title;
 	}
