@@ -45,7 +45,7 @@ public class MatchingController {
 					formatted.put("job_title", job.getTitle());
 					formatted.put("job_toApply", job.getToApply());
 					formatted.put("job_location", job.getLocation());
-				}
+				}     
 				return formatted;
 			}).collect(Collectors.toList());
 
@@ -56,7 +56,7 @@ public class MatchingController {
 	}
 
 	@GetMapping("/candidates/{jobPostId}")
-	public ResponseEntity<?> findMatchingCandidates(@PathVariable int jobPostId) {
+	public ResponseEntity<?> findMatchingCandidates(@PathVariable("jobPostId") int jobPostId) {
 		try {
 			Optional<JobPost> jobPostOpt = jobPostRepository.findById(jobPostId);
 			if (!jobPostOpt.isPresent()) {

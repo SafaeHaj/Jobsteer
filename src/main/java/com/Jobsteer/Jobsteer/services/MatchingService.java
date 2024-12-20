@@ -26,7 +26,6 @@ public class MatchingService {
         Map<String, Object> resumeMap = new HashMap<>();
         resumeMap.put("id", resume.getId());
         
-        // Convert experiences
         List<Map<String, Object>> experiencesList = new ArrayList<>();
         for (Experience exp : resume.getExperiences()) {
             Map<String, Object> expMap = new HashMap<>();
@@ -36,7 +35,6 @@ public class MatchingService {
         }
         resumeMap.put("experiences", experiencesList);
         
-        // Convert languages
         List<Map<String, Object>> languagesList = new ArrayList<>();
         for (Language lang : resume.getLanguages()) {
             Map<String, Object> langMap = new HashMap<>();
@@ -45,7 +43,6 @@ public class MatchingService {
         }
         resumeMap.put("languages", languagesList);
         
-        // Convert JobSeeker
         Map<String, Object> jobSeekerMap = new HashMap<>();
         jobSeekerMap.put("location", resume.getJobSeeker().getLocation());
         resumeMap.put("jobSeeker", jobSeekerMap);
@@ -59,7 +56,6 @@ public class MatchingService {
         jobMap.put("title", jobPost.getTitle());
         jobMap.put("location", jobPost.getLocation());
         
-        // Convert requirements
         List<Map<String, Object>> requirementsList = new ArrayList<>();
         for (Requirement req : jobPost.getRequirement()) {
             Map<String, Object> reqMap = new HashMap<>();

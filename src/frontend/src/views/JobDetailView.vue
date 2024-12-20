@@ -1,7 +1,7 @@
 <template>
     <div class="job-detail">
         <div class="job-left-column">
-            <h3 class="job-title">{{ job.id }}</h3>
+            <h3 class="job-title">{{ job.title }}</h3>
             <p class="job-location">📍 {{ job.location }}</p>
             <p class="job-description">{{ job.description }}</p>
         </div>
@@ -36,8 +36,14 @@ export default {
         candidates() {
             return this.jobPostStore.candidates[this.jobId] || [];
         },
+    },
+    mounted() {
+        if (!this.jobPostStore.candidates[this.jobId]) {
+            this.jobPostStore.fetchBestCandidates(this.jobId);
+        }
     }
-};
+    }
+;
 </script>
 
 <style scoped>

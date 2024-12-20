@@ -45,8 +45,8 @@ export const useJobPostStore = defineStore('jobPostStore', {
     fetchBestCandidates(jobPostId) {
       axiosInstance.get(`/api/matching/candidates/${jobPostId}`)
         .then(response => {
-          // Store the candidates data in the map with the job post ID as the key
           this.candidates = { ...this.candidates, [jobPostId]: response.data };
+          console.log("here", this.candidates);
           localStorage.setItem('candidates', JSON.stringify(this.candidates));
         })
         .catch(error => {

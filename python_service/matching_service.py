@@ -5,7 +5,6 @@ from typing import List, Dict, Any
 
 app = Flask(__name__)
 
-# Initialize BERT model for semantic similarity
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 class MatchingService:
@@ -83,7 +82,6 @@ class MatchingService:
                     scores['language'] += float(has_language)
                     counts['language'] += 1
         
-        # Calculate averages
         for key in scores:
             if counts[key] > 0:
                 scores[key] = scores[key] / counts[key]
@@ -97,7 +95,6 @@ class MatchingService:
             print("Job Post:", job_post)  # Debug print
             print("Resume:", resume)      # Debug print
             
-            # Extract needed fields
             title = job_post.get('title', '')
             location = job_post.get('location', '')
             requirements = job_post.get('requirements', [])
@@ -105,7 +102,6 @@ class MatchingService:
             languages = [lang.get('language', '') for lang in resume.get('languages', [])]
             candidate_location = resume.get('jobSeeker', {}).get('location', '')
 
-            # Calculate scores
             title_score = self.match_job_title(title, experiences)
             requirement_scores = self.match_requirements(requirements, experiences, languages)
             location_score = self.calculate_location_score(location, candidate_location)
@@ -159,7 +155,6 @@ class MatchingService:
             print(f"Error ranking resumes: {e}")
             return []
 
-# Initialize the matching service
 matching_service = MatchingService()
 
 @app.route('/match-jobs', methods=['POST'])

@@ -9,14 +9,11 @@ app = Flask(__name__)
 
 class JobScraper:
     def __init__(self):
-        # Initialize Groq client for text processing
         self.groq_api_key = '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'
         self.client = Groq(api_key=self.groq_api_key)
         
-        # Initialize translator
         self.translator = GoogleTranslator(source='fr', target='en')
         
-        # API configuration
         self.api_url = "https://api.theirstack.com/v1/jobs/search"
         self.api_headers = {
             "Accept": "application/json",
@@ -96,7 +93,6 @@ class JobScraper:
                     model="llama-3.3-70b-versatile",
                 )
 
-                # Parse the AI response
                 parsed_data = {}
                 for line in response.choices[0].message.content.split("\n"):
                     key_value = line.split(":", 1)
@@ -104,10 +100,8 @@ class JobScraper:
                         key, value = key_value
                         parsed_data[key.strip().upper()] = [v.strip() for v in value.split(',')]
 
-                # Combine with original job data
                 combined_entry = {**job, **parsed_data}
 
-                # Convert lists to comma-separated strings
                 combined_entry['EXPERIENCE'] = ', '.join(combined_entry.get('EXPERIENCE', []))
                 combined_entry['EDUCATION'] = ', '.join(combined_entry.get('EDUCATION', []))
                 combined_entry['SKILL'] = ', '.join(combined_entry.get('SKILL', []))
@@ -123,23 +117,19 @@ class JobScraper:
         return extracted_data
 
 
-# Initialize the scraper as a global instance
 scraper = JobScraper()
 
 @app.route('/get-jobs', methods=['GET'])
 def get_jobs():
     try:
-        # Fetch and translate jobs
         print("Fetching and translating jobs...")
         jobs = scraper.fetch_jobs()
         print(f"Retrieved {len(jobs)} jobs")
         
-        # Extract structured fields
         print("Extracting structured fields...")
         processed_jobs = scraper.extract_fields(jobs)
         print(f"Processed {len(processed_jobs)} jobs")
         
-        # Format jobs as per Salme structure
         formatted_jobs = []
         for job in processed_jobs:
             formatted_jobs.append({

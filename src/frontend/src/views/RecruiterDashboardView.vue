@@ -146,7 +146,6 @@ export default {
 }
 
 .action-button {
-  font-size: 0.875rem;
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   border: none;
@@ -156,7 +155,7 @@ export default {
 }
 
 .action-button.primary {
-  background-color: #6a0dad;
+  background-color: #633b81;
   color: white;
 }
 
@@ -165,7 +164,7 @@ export default {
 }
 
 .action-button.secondary {
-  background-color: #8a2be2;
+  background-color: #845AA4;
   color: white;
 }
 

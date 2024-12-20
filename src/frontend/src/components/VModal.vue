@@ -25,19 +25,18 @@ export default {
 </script>
 
 <style>
-/* Modal Overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Dimmed background */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    overflow: hidden; /* Prevent scrolling within the modal overlay */
+    overflow: hidden; 
 }
 
 .modal-content {

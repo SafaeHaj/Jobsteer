@@ -8,7 +8,6 @@ import json
 
 app = Flask(__name__)
 
-# Configure Groq client
 os.environ['GROQ_API_KEY'] = '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'
 client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
@@ -61,7 +60,6 @@ def combine(text):
     projects = parsed(text, 'project')
     extra = parsed(text, 'extracurricular')
     
-    # Convert to format expected by Java application
     combined_data = {
         'education': [{'description': desc} for desc in ed.split(' ~ ') if desc],
         'work': [{'description': desc} for desc in work.split(' ~ ') if desc],
@@ -82,31 +80,19 @@ def parse_resume():
     
     temp_dir = None
     try:
-        # Create a temporary directory
         temp_dir = tempfile.mkdtemp()
         temp_file_path = os.path.join(temp_dir, 'temp_resume.pdf')
         
-        # Save uploaded file
         file.save(temp_file_path)
         
-        # Extract text from PDF
         text = extract_text(temp_file_path)
         
-        # Parse the text
         parsed_data = combine(text)
         
         return jsonify(parsed_data)
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    """
-    finally:
-        # Clean up: remove temporary directory and all its contents
-        if temp_dir and os.path.exists(temp_dir):
-            try:
-                shutil.rmtree(temp_dir, ignore_errors=True)
-            except Exception as e:
-                print(f"Error cleaning up temporary files: {e}")
-    """
+   
 if __name__ == '__main__':
     app.run(port=5000)
