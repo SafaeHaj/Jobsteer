@@ -25,28 +25,36 @@ export default {
 </script>
 
 <style>
+/* Modal Overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.6); /* Dimmed background */
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    overflow: hidden; /* Prevent scrolling within the modal overlay */
 }
 
 .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
+  overflow-y: scroll;
+  max-height: 80vh;
 }
 
+.modal-content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Webkit browsers */
+}
+
+.modal-content {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+/* Close Button */
 .close-button {
     position: absolute;
     top: 10px;
@@ -55,5 +63,12 @@ export default {
     border: none;
     font-size: 20px;
     cursor: pointer;
+    color: #333;
 }
+
+/* Prevent Background Scroll */
+body.modal-active {
+    overflow: hidden; /* Disable scrolling */
+}
+
 </style>

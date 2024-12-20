@@ -36,7 +36,7 @@ export const useJobPostStore = defineStore('jobPostStore', {
       const userStore = useUserStore();
       axiosInstance.get(`/api/jobpost/recruiter/${userStore.user.id}`)
         .then(response => {
-          this.jobPosts = [...response.data]; // Replace with a new array
+          this.jobPosts = [...response.data]; 
         })
         .catch(error => {
           console.error('There was an error fetching the job posts:', error);

@@ -1,5 +1,7 @@
 package com.Jobsteer.Jobsteer.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +28,7 @@ public class Requirement{
 	private String description;
 	
 	@ManyToOne
+    @JsonBackReference
 	@JoinColumn(name = "jobpost")
 	private JobPost jobPost;
 

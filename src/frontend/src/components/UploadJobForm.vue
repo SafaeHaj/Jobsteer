@@ -100,7 +100,6 @@
           required
         />
       </div>
-
       <button type="submit" class="submit-button">Submit</button>
     </form>
   </div>
@@ -109,8 +108,9 @@
 <script>
 import { useJobPostStore } from '@/store/jobpostStore.js';
 import { useUserStore } from '@/store/user';
+
 export default {
-  name: 'UploadJobView',
+  name: 'UploadJobForm',
   data() {
     return {
       job: {
