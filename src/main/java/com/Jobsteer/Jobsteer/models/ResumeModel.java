@@ -18,7 +18,7 @@ public class ResumeModel {
 		return resumes;
 	}
 
-	public Resume findById(int id) {
+	public Resume findById(Long id) {
 		Optional<Resume> resume = resumeRepo.findById(id);
 
 		if (resume.isEmpty()) {
@@ -28,7 +28,7 @@ public class ResumeModel {
 		return resume.get();
 	}
 
-	public void deleteById(int id) {
+	public void deleteById(Long id) {
 	    if (!resumeRepo.existsById(id)) {
 	        throw new ResumeNotFoundException("Resume with id: " + id + " not found.");
 	    }

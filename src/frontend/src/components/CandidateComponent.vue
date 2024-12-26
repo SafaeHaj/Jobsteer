@@ -1,5 +1,5 @@
 <template>
-    <div class="candidate-card">
+    <div v-if="candidate" class="candidate-card">
         <div class="candidate-header">
             <div class="candidate-info">
                 <h4>{{ candidate.candidate_name }}</h4>
@@ -50,6 +50,9 @@
                 </li>
             </ul>
         </div>
+    </div>
+    <div v-else class="candidate-header candidate-card">
+        Loading Candidates...
     </div>
 </template>
 

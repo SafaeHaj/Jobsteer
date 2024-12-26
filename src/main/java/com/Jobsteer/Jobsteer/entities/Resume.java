@@ -67,7 +67,7 @@ public class Resume{
 		return sourceFile;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -84,11 +84,12 @@ public class Resume{
 	}
 
 	public List<Language> getLanguages() {
-		return  languages;
+		return languages;
 	}
 
-	public void setLanguages(List<Language> languages) {
-		this.languages = languages;
+	public void addLanguage(Language language) {
+		this.languages.add(language);
+		language.setResume(this);
 	}
 
 	public void setSourceFile(byte[] fileBytes) {

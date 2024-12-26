@@ -16,11 +16,11 @@ public class JobSeeker extends User {
 		return resume;
 	}
 
-	public void uploadCv(Resume newResume) {
+	public void setResume(Resume newResume) {
         this.resume = newResume;
     }
 
-    public void deleteCv() {
+    public void deleteResume() {
         this.resume = null;
     }
 

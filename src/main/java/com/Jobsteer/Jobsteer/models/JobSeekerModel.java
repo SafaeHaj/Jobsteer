@@ -1,5 +1,4 @@
 package com.Jobsteer.Jobsteer.models;
-//package com.Jobsteer.Jobsteer.services;
 import com.Jobsteer.Jobsteer.entities.JobSeeker;
 import com.Jobsteer.Jobsteer.entities.Resume;
 import com.Jobsteer.Jobsteer.repositories.JobSeekerRepository;
@@ -19,7 +18,6 @@ public class JobSeekerModel {
         return jobSeekerRepository.findAll();
     }
 
-
     public JobSeeker saveJobSeeker(JobSeeker jobSeeker) {
         return jobSeekerRepository.save(jobSeeker);
     }
@@ -35,20 +33,18 @@ public class JobSeekerModel {
     }
 
 
-    // Upload a resume
     public void uploadResume(Long jobSeekerId, Resume resume) {
         Optional<JobSeeker> jobSeekerOptional = jobSeekerRepository.findById(jobSeekerId);
         jobSeekerOptional.ifPresent(jobSeeker -> {
-            jobSeeker.uploadCv(resume);
+            jobSeeker.setResume(resume);
             jobSeekerRepository.save(jobSeeker);
         });
     }
 
-    // Delete a resume
     public void deleteResume(Long jobSeekerId) {
         Optional<JobSeeker> jobSeekerOptional = jobSeekerRepository.findById(jobSeekerId);
         jobSeekerOptional.ifPresent(jobSeeker -> {
-            jobSeeker.deleteCv();
+            jobSeeker.deleteResume();
             jobSeekerRepository.save(jobSeeker);
         });
     }

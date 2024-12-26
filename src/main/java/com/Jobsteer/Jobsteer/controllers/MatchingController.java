@@ -26,7 +26,7 @@ public class MatchingController {
 	private ResumeRepository resumeRepository;
 
 	@GetMapping("/jobs/{resumeId}")
-	public ResponseEntity<?> findMatchingJobs(@PathVariable("resumeId") int resumeId) {
+	public ResponseEntity<?> findMatchingJobs(@PathVariable("resumeId") Long resumeId) {
 		try {
 			Optional<Resume> resumeOpt = resumeRepository.findById(resumeId);
 			if (!resumeOpt.isPresent()) {
@@ -67,7 +67,7 @@ public class MatchingController {
 			List<Map<String, Object>> matches = matchingService.findMatchingCandidates(jobPostOpt.get(), allResumes);
 
 			List<Map<String, Object>> formattedMatches = matches.stream().map(match -> {
-				Resume resume = allResumes.stream().filter(r -> r.getId() == ((Integer) match.get("resume_id")))
+				Resume resume = allResumes.stream().filter(r -> r.getId() == (match.get("resume_id")))
 						.findFirst().orElse(null);
 
 				Map<String, Object> formatted = new HashMap<>(match);

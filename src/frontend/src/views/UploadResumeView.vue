@@ -6,7 +6,7 @@
               id="resume-upload"
               class="upload-input"
               accept=".pdf"
-              @change="handleFileUpload"
+              @change="onFileChange"
           />
           <label for="resume-upload" class="upload-btn">
               Upload Resume
@@ -36,72 +36,58 @@
 
 <script>
 import JobComponent from '@/components/JobComponent.vue';
-import axiosInstance from '@/store/config.js';
-import { useUserStore } from '@/store/user.js';
+import { useResumeStore } from '@/store/resumeStore';
 
 export default {
   name: 'UploadResumeView',
   components: {
-      JobComponent
+    JobComponent,
   },
   data() {
-      return {
-          jobs: [],
-          isLoading: false,
-          error: null
-      }
+    return {
+      jobs: [],
+      isLoading: false,
+      error: null,
+    };
   },
-  computed: {
-      user() {
-        const userStore = useUserStore();
-        return userStore.user;
+  methods: {
+    async onFileChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      this.error = null;
+      this.isLoading = true;
+
+      try {
+        const resumeId = await this.uploadResumeFile(file);
+        await this.loadMatchingJobs(resumeId);
+      } catch (err) {
+        this.error = err.message || 'An error occurred';
+      } finally {
+        this.isLoading = false;
       }
     },
-  methods: {
-      async handleFileUpload(event) {
-         console.log("haniii", this.user);
-          const file = event.target.files[0];
-          if (!file) return;
 
-          if (file.type !== 'application/pdf') {
-              this.error = 'Please upload a PDF file';
-              return;
-          }
-          this.isLoading = true;
-
-          try {
-              const formData = new FormData();
-              formData.append('file', file);
-              const customConfig = {
-                  headers: {
-                      'Content-Type': 'multipart/form-data'
-                  }
-              };
-              
-              const uploadResponse = await axiosInstance.post(
-                  `/api/resume/upload/${this.user.id}`,
-                  formData,
-                  customConfig
-              );
-
-              console.log('Upload response:', uploadResponse.data);
-
-              if (uploadResponse.data?.resumeId) {
-                  const matchingResponse = await axiosInstance.get(
-                      `/api/matching/jobs/${uploadResponse.data.resumeId}`
-                  );
-                  
-                  console.log('Matching response:', matchingResponse.data);
-                  this.jobs = matchingResponse.data;
-              }
-          } catch (error) {
-              console.error('Error details:', error.response || error);
-              this.error = error.response?.data?.message || 'Failed to process resume';
-          } finally {
-              this.isLoading = false;
-          }
+    async uploadResumeFile(file) {
+      if (file.type !== 'application/pdf') {
+        throw new Error('Please upload a PDF file');
       }
-  }
+
+      const resumeStore = useResumeStore();
+      const uploadResponse = await resumeStore.uploadResume(file);
+
+      if (!uploadResponse?.resumeId) {
+        throw new Error('Failed to upload resume');
+      }
+
+      return uploadResponse.resumeId;
+    },
+
+    async loadMatchingJobs(resumeId) {
+      const resumeStore = useResumeStore();
+      this.jobs = await resumeStore.fetchMatchingJobs(resumeId);
+    },
+  },
 };
 </script>
 
