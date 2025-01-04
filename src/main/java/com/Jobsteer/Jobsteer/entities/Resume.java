@@ -18,11 +18,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "resume")
-public class Resume{
+public class Resume implements Matchable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
 	@OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
@@ -67,11 +67,11 @@ public class Resume{
 		return sourceFile;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

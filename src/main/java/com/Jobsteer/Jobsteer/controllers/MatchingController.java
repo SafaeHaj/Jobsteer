@@ -26,7 +26,7 @@ public class MatchingController {
 	private ResumeRepository resumeRepository;
 
 	@GetMapping("/jobs/{resumeId}")
-	public ResponseEntity<?> findMatchingJobs(@PathVariable("resumeId") Long resumeId) {
+	public ResponseEntity<?> findMatchingJobs(@PathVariable("resumeId") Integer resumeId) {
 		try {
 			Optional<Resume> resumeOpt = resumeRepository.findById(resumeId);
 			if (!resumeOpt.isPresent()) {
@@ -56,7 +56,7 @@ public class MatchingController {
 	}
 
 	@GetMapping("/candidates/{jobPostId}")
-	public ResponseEntity<?> findMatchingCandidates(@PathVariable("jobPostId") int jobPostId) {
+	public ResponseEntity<?> findMatchingCandidates(@PathVariable("jobPostId") Integer jobPostId) {
 		try {
 			Optional<JobPost> jobPostOpt = jobPostRepository.findById(jobPostId);
 			if (!jobPostOpt.isPresent()) {
@@ -67,15 +67,15 @@ public class MatchingController {
 			List<Map<String, Object>> matches = matchingService.findMatchingCandidates(jobPostOpt.get(), allResumes);
 
 			List<Map<String, Object>> formattedMatches = matches.stream().map(match -> {
-				Resume resume = allResumes.stream().filter(r -> r.getId() == (match.get("resume_id")))
+				Resume resume = allResumes.stream().filter(r -> r.getId() == ((Integer) match.get("resume_id")))
 						.findFirst().orElse(null);
 
 				Map<String, Object> formatted = new HashMap<>(match);
-				if (resume != null && resume.getJobSeeker() != null) {
+				if (resume != null) {
 					JobSeeker jobSeeker = resume.getJobSeeker();
-					formatted.put("candidate_name", jobSeeker.getFullName());
-					formatted.put("candidate_email", jobSeeker.getEmail());
-					formatted.put("candidate_location", jobSeeker.getLocation());
+					formatted.put("name", jobSeeker.getFullName());
+					formatted.put("email", jobSeeker.getEmail());
+					formatted.put("location", jobSeeker.getLocation());
 					formatted.put("resume_id", resume.getId());
 					formatted.put("experiences", resume.getExperiences());
 					formatted.put("languages", resume.getLanguages());

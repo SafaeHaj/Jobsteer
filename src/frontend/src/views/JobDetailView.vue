@@ -7,8 +7,10 @@
         </div>
         <div class="job-right-column">
             <h4 class="candidate-title">Best Candidates:</h4>
-            <ul class="candidate-list">
-                <CandidateComponent v-for="candidate in candidates" :key="candidate.resume_id" :candidate="candidate" />
+            <div v-if="loading" class="loading-spinner">Loading Candidates...</div>
+            <ul v-else class="candidate-list">
+                <CandidateComponent v-for="candidate in candidates" :key="candidate.resume_id" :candidate="candidate"
+                    :loading="loading" />
             </ul>
         </div>
     </div>
@@ -21,17 +23,18 @@ import { useJobPostStore } from '@/store/jobpostStore';
 export default {
     name: 'JobDetailView',
     components: {
-        CandidateComponent
+        CandidateComponent,
     },
     data() {
         return {
             jobPostStore: useJobPostStore(),
             jobId: this.$route.params.jobId,
+            loading: true,
         };
     },
     computed: {
         job() {
-            return this.jobPostStore.jobPosts.find(job => job.id == this.jobId) || {};
+            return this.jobPostStore.jobPosts.find((job) => job.id == this.jobId) || {};
         },
         candidates() {
             return this.jobPostStore.candidates[this.jobId] || [];
@@ -39,14 +42,31 @@ export default {
     },
     mounted() {
         if (!this.jobPostStore.candidates[this.jobId]) {
-            this.jobPostStore.fetchBestCandidates(this.jobId);
+            this.jobPostStore
+                .fetchBestCandidates(this.jobId)
+                .then(() => {
+                    this.loading = false;
+                })
+                .catch(() => {
+                    this.loading = false;
+                });
+        } else {
+            this.loading = false;
         }
     }
-    }
-;
+};
 </script>
 
+
+
 <style scoped>
+.loading-spinner {
+    text-align: center;
+    color: #4a5568;
+    font-size: 1.2rem;
+    padding: 2rem 0;
+}
+
 .job-detail {
     display: flex;
     flex-wrap: wrap;

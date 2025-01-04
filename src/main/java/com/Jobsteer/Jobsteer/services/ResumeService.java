@@ -42,7 +42,7 @@ public class ResumeService {
         return ResponseEntity.ok(resumes);
     }
 	
-	public ResponseEntity<?> getResumeById(Long id) {
+	public ResponseEntity<?> getResumeById(Integer id) {
 		try {
 			Optional<Resume> resume = resumeRepo.findById(id);
 			System.out.println("resume: " + resume.get());
@@ -56,7 +56,7 @@ public class ResumeService {
 		}
 	}
 	
-	public ResponseEntity<?> deleteResume(Long id) {
+	public ResponseEntity<?> deleteResume(Integer id) {
 	    try {
 	    	 Optional<JobSeeker> jobSeekerOpt = jobSeekerRepo.findAll().stream()
 	                 .filter(js -> js.getResume() != null && js.getResume().getId() == id)
@@ -100,7 +100,7 @@ public class ResumeService {
 		}
 	}
 
-	public ResponseEntity<?> updateResume(Long id, MultipartFile file) {
+	public ResponseEntity<?> updateResume(Integer id, MultipartFile file) {
 		try {
 			Resume resume = resumeRepo.findById(id)
 					.orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + id + " not found"));

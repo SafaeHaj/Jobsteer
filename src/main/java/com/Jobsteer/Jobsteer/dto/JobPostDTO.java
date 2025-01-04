@@ -7,9 +7,8 @@ public class JobPostDTO {
     private String location;
     private String description;
     private String toApply;
-    private List<RequirementDTO> requirements; // List of RequirementDTO
+    private List<RequirementDTO> requirements; 
 
-    // Constructors
     public JobPostDTO() {}
 
     public JobPostDTO(String title, String location, String description, String toApply, List<RequirementDTO> requirements) {
@@ -20,7 +19,6 @@ public class JobPostDTO {
         this.requirements = requirements;
     }
 
-    // Getters and Setters
     public String getTitle() {
         return title;
     }

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "jobpost")
-public class JobPost {
+public class JobPost implements Matchable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

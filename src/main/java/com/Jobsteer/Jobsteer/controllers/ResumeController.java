@@ -19,7 +19,7 @@ public class ResumeController {
     }
 
     @GetMapping("/resume/{id}")
-    public ResponseEntity<?> getResumeById(@PathVariable Long id) {
+    public ResponseEntity<?> getResumeById(@PathVariable Integer id) {
         return resumeService.getResumeById(id);
     }
 
@@ -31,12 +31,12 @@ public class ResumeController {
     }
 
     @PostMapping("/resume/delete/{id}")
-    public ResponseEntity<?> deleteResume(@PathVariable Long id) {
+    public ResponseEntity<?> deleteResume(@PathVariable Integer id) {
         return resumeService.deleteResume(id);
     }
 
     @PostMapping("/resume/update/{id}")
-    public ResponseEntity<?> updateResume(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> updateResume(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
         try {
 			return resumeService.updateResume(id, file);
 		} catch (Exception e) {

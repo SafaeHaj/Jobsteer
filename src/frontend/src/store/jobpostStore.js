@@ -12,7 +12,7 @@ export const useJobPostStore = defineStore('jobPostStore', {
     async addJobPost(jobPostData) {
       try {
         const response = await axiosInstance.post('/api/jobpost/internal', jobPostData);
-        await this.fetchJobPosts();
+        this.fetchJobPosts();
         return response.data;
       } catch (error) {
         console.error('Error adding job post:', error);
@@ -42,15 +42,17 @@ export const useJobPostStore = defineStore('jobPostStore', {
           console.error('There was an error fetching the job posts:', error);
         });
     },
-    fetchBestCandidates(jobPostId) {
-      axiosInstance.get(`/api/matching/candidates/${jobPostId}`)
+    async fetchBestCandidates(jobPostId) {
+      return axiosInstance
+        .get(`/api/matching/candidates/${jobPostId}`)
         .then(response => {
           this.candidates = { ...this.candidates, [jobPostId]: response.data };
           localStorage.setItem('candidates', JSON.stringify(this.candidates));
         })
         .catch(error => {
           console.error('There was an error fetching best candidates:', error);
+          throw error;
         });
     }
-  },
+  }
 });
