@@ -18,7 +18,7 @@ class JobScraper:
         self.api_headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYWZhZS5oYWpAZ21haWwuY29tIiwicGVybWlzc2lvbnMiOiJ1c2VyIn0.l-rDEoIdoSCM30W_bS3EREJ4_OzImWW-VH7l1yRK4MM"
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYWxtYS56b3VoYWlyaTZ0QGdtYWlsLmNvbSIsInBlcm1pc3Npb25zIjoidXNlciJ9.0dfAY36mjKLKABtkjb-JIJ2TwS4iJUi0nluY2Xk6W7s"
         }
 
     def fetch_jobs(self) -> List[Dict]:
