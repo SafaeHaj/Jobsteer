@@ -57,12 +57,23 @@ export const useUserStore = defineStore('user', {
         throw error; 
       }
     },
-    
+    async updateUser(userData) {
+      const token = localStorage.getItem('authToken');
+      const response = await axiosInstance.put(`/api/users/${this.user.id}`, userData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      this.user = response.data;
+      localStorage.setItem('user', JSON.stringify(this.user));
+      return response.data;
+    },
     logoutUser() {
       this.user = null;
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
     }
+    
   },
   
   getters: {
