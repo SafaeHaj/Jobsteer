@@ -4,9 +4,6 @@
       <h2 class="section-title">Job Posts for {{ user.companyName }}</h2>
 
       <div class="actions-section">
-        <button @click="fetchJobPosts" class="action-button primary">
-          Refresh Job Posts
-        </button>
         <button v-if="!showJobPostForm" @click="toggleJobPostForm" class="action-button secondary">
           Create Job Post
         </button>
