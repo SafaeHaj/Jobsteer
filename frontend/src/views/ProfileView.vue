@@ -1,5 +1,3 @@
-// src/views/ProfileView.vue
-
 <template>
   <div class="profile-container">
     <!-- Profile Information Display -->
@@ -36,8 +34,7 @@
       <template v-if="user?.role === 'jobseeker'">
         <div class="input-group">
           <label for="location">Location</label>
-          <input type="text" id="location" v-model="formData.location" 
-                 placeholder="City, Country">
+          <input type="text" id="location" v-model="formData.location" placeholder="City, Country">
         </div>
       </template>
 
@@ -47,6 +44,17 @@
           <input type="text" id="companyName" v-model="formData.companyName" required>
         </div>
       </template>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          v-model="formData.password" 
+          placeholder="Enter new password"
+        >
+        <small>Leave blank to keep the current password unchanged.</small>
+      </div>
 
       <div class="button-group">
         <button type="submit" class="save-button">Save Changes</button>
@@ -74,7 +82,7 @@ export default {
     const isEditing = ref(false);
     const message = ref('');
     const messageType = ref('');
-    
+
     const user = computed(() => userStore.user);
 
     const formData = ref({
@@ -82,7 +90,8 @@ export default {
       firstName: '',
       lastName: '',
       location: '',
-      companyName: ''
+      companyName: '',
+      password: '' // Password starts as empty
     });
 
     onMounted(() => {
@@ -97,7 +106,8 @@ export default {
         firstName: user.value.firstName,
         lastName: user.value.lastName,
         location: user.value.location || '',
-        companyName: user.value.companyName || ''
+        companyName: user.value.companyName || '',
+        password: '' // Leave empty for the user to enter a new password if needed
       };
       isEditing.value = true;
     };
@@ -117,7 +127,11 @@ export default {
 
     const submitForm = async () => {
       try {
-        await userStore.updateUser(formData.value);
+        const payload = { ...formData.value };
+        if (!payload.password) {
+          delete payload.password; // Skip updating password if it's empty
+        }
+        await userStore.updateUser(payload);
         isEditing.value = false;
         showMessage('Profile updated successfully!');
       } catch (error) {
