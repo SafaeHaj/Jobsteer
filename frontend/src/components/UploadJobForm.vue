@@ -5,7 +5,13 @@
 
       <div class="input-group">
         <label for="title">Job Title</label>
-        <input type="text" id="title" v-model="job.title" placeholder="Enter job title" required />
+        <input
+          type="text"
+          id="title"
+          v-model="job.title"
+          placeholder="Enter job title"
+          required
+        />
       </div>
 
       <div class="input-group">
@@ -22,8 +28,22 @@
         <textarea
           id="location"
           v-model="job.location"
-          placeholder="format: City, Country"
+          placeholder="Enter City"
+          @input="handleLocationInput"
+          :class="{ error: locationError }"
         ></textarea>
+        <ul v-if="suggestions.length" class="suggestions">
+          <li
+            v-for="(suggestion, index) in suggestions"
+            :key="index"
+            @click="selectSuggestion(suggestion)"
+          >
+            {{ suggestion }}
+          </li>
+        </ul>
+        <p v-if="locationError" class="error-message">
+          Invalid location. Please enter a valid City, Country.
+        </p>
       </div>
 
       <div class="input-group">
@@ -69,7 +89,9 @@
         <ul class="tag-list">
           <li v-for="(skill, index) in job.skills" :key="index" class="tag">
             {{ skill }}
-            <button type="button" class="delete-button" @click="removeSkill(index)">x</button>
+            <button type="button" class="delete-button" @click="removeSkill(index)">
+              x
+            </button>
           </li>
         </ul>
       </div>
@@ -85,7 +107,9 @@
         <ul class="tag-list">
           <li v-for="(experience, index) in job.experiences" :key="index" class="tag">
             {{ experience }}
-            <button type="button" class="delete-button" @click="removeExperience(index)">x</button>
+            <button type="button" class="delete-button" @click="removeExperience(index)">
+              x
+            </button>
           </li>
         </ul>
       </div>
@@ -106,40 +130,113 @@
 </template>
 
 <script>
-import { useJobPostStore } from '@/store/jobpostStore.js';
-import { useUserStore } from '@/store/user';
+import { useJobPostStore } from "@/store/jobpostStore.js";
+import { useUserStore } from "@/store/user";
+import { City, Country } from "country-state-city";
 
 export default {
-  name: 'UploadJobForm',
+  name: "UploadJobForm",
   data() {
     return {
       job: {
-        title: '',
-        description: '',
-        location: '',
-        toApply: '',
+        title: "",
+        description: "",
+        location: "",
+        toApply: "",
         education: [],
         languages: [],
         skills: [],
         experiences: [],
       },
-      educationInput: '',
-      languageInput: '',
-      skillInput: '',
-      experienceInput: '',
+      locations: [],
+      suggestions: [],
+      locationError: false,
+      educationInput: "",
+      languageInput: "",
+      skillInput: "",
+      experienceInput: "",
     };
   },
-  computed: {
-      user() {
-        const userStore = useUserStore();
-        return userStore.user;
+  mounted() {
+    const cities = City.getAllCities();
+    const countries = Country.getAllCountries();
+
+    this.locationsMap = new Map();
+
+    cities.forEach((city) => {
+      const country =
+        countries.find((c) => c.isoCode === city.countryCode)?.name || "Unknown";
+      const cityKey = city.name.toLowerCase();
+      const countryKey = country.toLowerCase();
+
+      if (!this.locationsMap.has(cityKey)) {
+        this.locationsMap.set(cityKey, new Set());
       }
+
+      this.locationsMap.get(cityKey).add(countryKey);
+    });
+
+    this.locationsMap.forEach((countries, cityKey) => {
+      this.locationsMap.set(cityKey, Array.from(countries));
+    });
+
+    this.flatLocations = Array.from(
+      this.locationsMap.entries()
+    ).flatMap(([city, countries]) =>
+      countries.map(
+        (country) =>
+          `${city.charAt(0).toUpperCase() + city.slice(1)}, ${
+            country.charAt(0).toUpperCase() + country.slice(1)
+          }`
+      )
+    );
+  },
+  computed: {
+    user() {
+      const userStore = useUserStore();
+      return userStore.user;
     },
+  },
   methods: {
+    debounce(fn, delay) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, args), delay);
+      };
+    },
+    handleLocationInput() {
+      this.debounce(() => {
+        const input = this.job.location.trim().toLowerCase();
+        if (!input) {
+          this.suggestions = [];
+          this.locationError = false;
+          return;
+        }
+
+        const [cityInput = "", countryInput = ""] = input.split(",").map((s) => s.trim());
+        const citySuggestions = this.locationsMap.get(cityInput) || [];
+
+        if (countryInput) {
+          this.suggestions = citySuggestions
+            .filter((country) => country.includes(countryInput))
+            .map((country) => `${cityInput}, ${country}`);
+        } else {
+          this.suggestions = citySuggestions.map((country) => `${cityInput}, ${country}`);
+        }
+
+        this.locationError = this.suggestions.length === 0;
+      }, 300)();
+    },
+    selectSuggestion(suggestion) {
+      this.job.location = suggestion;
+      this.suggestions = [];
+      this.locationError = false;
+    },
     addEducation() {
       if (this.educationInput.trim()) {
         this.job.education.push(this.educationInput.trim());
-        this.educationInput = '';
+        this.educationInput = "";
       }
     },
     removeEducation(index) {
@@ -148,7 +245,7 @@ export default {
     addLanguage() {
       if (this.languageInput.trim()) {
         this.job.languages.push(this.languageInput.trim());
-        this.languageInput = '';
+        this.languageInput = "";
       }
     },
     removeLanguage(index) {
@@ -157,7 +254,7 @@ export default {
     addSkill() {
       if (this.skillInput.trim()) {
         this.job.skills.push(this.skillInput.trim());
-        this.skillInput = '';
+        this.skillInput = "";
       }
     },
     removeSkill(index) {
@@ -166,7 +263,7 @@ export default {
     addExperience() {
       if (this.experienceInput.trim()) {
         this.job.experiences.push(this.experienceInput.trim());
-        this.experienceInput = '';
+        this.experienceInput = "";
       }
     },
     removeExperience(index) {
@@ -186,16 +283,16 @@ export default {
         };
 
         this.job.education.forEach((edu) => {
-          jobPostData.requirements.push({ type: 'EDUCATION', description: edu });
+          jobPostData.requirements.push({ type: "EDUCATION", description: edu });
         });
         this.job.languages.forEach((lang) => {
-          jobPostData.requirements.push({ type: 'LANGUAGE', description: lang });
+          jobPostData.requirements.push({ type: "LANGUAGE", description: lang });
         });
         this.job.skills.forEach((skill) => {
-          jobPostData.requirements.push({ type: 'SKILL', description: skill });
+          jobPostData.requirements.push({ type: "SKILL", description: skill });
         });
         this.job.experiences.forEach((exp) => {
-          jobPostData.requirements.push({ type: 'EXPERIENCE', description: exp });
+          jobPostData.requirements.push({ type: "EXPERIENCE", description: exp });
         });
 
         const response = await jobPostStore.addJobPost(jobPostData);
@@ -203,28 +300,28 @@ export default {
         if (response) {
           jobPostStore.jobPosts.push(response);
           this.resetForm();
-          alert('Job post created successfully!');
+          alert("Job post created successfully!");
         }
       } catch (error) {
-        console.error('Error in job submission:', error);
+        console.error("Error in job submission:", error);
         this.submissionError = `Failed to create job post: ${error.message}`;
       }
     },
     resetForm() {
       this.job = {
-        title: '',
-        description: '',
-        location: '',
-        toApply: '',
+        title: "",
+        description: "",
+        location: "",
+        toApply: "",
         education: [],
         languages: [],
         skills: [],
         experiences: [],
       };
-      this.educationInput = '';
-      this.languageInput = '';
-      this.skillInput = '';
-      this.experienceInput = '';
+      this.educationInput = "";
+      this.languageInput = "";
+      this.skillInput = "";
+      this.experienceInput = "";
     },
   },
 };
@@ -284,7 +381,7 @@ export default {
 .input-group input:focus,
 .input-group select:focus,
 .input-group textarea:focus {
-  border: 2px solid #845AA4;
+  border: 2px solid #845aa4;
 }
 
 .tag-list {
@@ -297,7 +394,7 @@ export default {
 
 .tag {
   color: #fff;
-  background-color: #845AA4;
+  background-color: #845aa4;
   padding: 5px 10px;
   border-radius: 20px;
   font-size: 14px;
@@ -316,7 +413,7 @@ export default {
 
 .add-button,
 .remove-button {
-  background-color: #845AA4;
+  background-color: #845aa4;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -326,12 +423,12 @@ export default {
 
 .add-button:hover,
 .remove-button:hover {
-  background-color: #62367D;
+  background-color: #62367d;
 }
 
 .submit-button {
   width: 100%;
-  background-color: #845AA4;
+  background-color: #845aa4;
   color: white;
   padding: 10px 15px;
   font-size: 16px;
@@ -341,7 +438,7 @@ export default {
 }
 
 .submit-button:hover {
-  background-color: #62367D;
+  background-color: #62367d;
 }
 
 .error-message {
@@ -349,5 +446,4 @@ export default {
   font-size: 14px;
   text-align: center;
 }
-
 </style>
