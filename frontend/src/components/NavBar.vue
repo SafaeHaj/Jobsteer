@@ -11,24 +11,24 @@
     <!-- Main Navigation Links -->
     <div class="flex items-center gap-6">
       <router-link to="/" class="nav-link text-primary">
-        <font-awesome-icon :icon="['fas', 'house']" class="mr-2 text-primary" />
+        <font-awesome-icon :icon="['fas', 'house']" class="sm:hidden mr-2 text-primary" />
         <span class="text-base hidden sm:inline text-primary">Home</span>
       </router-link>
       <router-link
         v-if="isLoggedIn && user.role === 'jobseeker'"
         to="/upload-resume"
-        class="nav-link text-primary"
+        class="nav-link text-primary bg-primary text-white px-4 py-2 rounded-full hover:bg-secondary"
       >
-        <font-awesome-icon :icon="['fas', 'upload']" class="mr-2 text-primary" />
-        <span class="text-base hidden sm:inline text-primary">Upload Resume</span>
+        <font-awesome-icon :icon="['fas', 'upload']" class="sm:hidden mr-2 text-white" />
+        <span class="text-base hidden sm:inline text-white">Upload Resume</span>
       </router-link>
       <router-link
         v-else-if="isLoggedIn && user.role === 'recruiter'"
         to="/recruiter-dashboard"
-        class="nav-link text-primary"
+        class="nav-link text-primary bg-primary text-white px-4 py-2 rounded-full hover:bg-secondary"
       >
-        <font-awesome-icon :icon="['fas', 'briefcase']" class="mr-2 text-primary" />
-        <span class="text-base hidden sm:inline text-primary">Upload Job</span>
+        <font-awesome-icon :icon="['fas', 'upload']" class="sm:hidden mr-2 text-white" />
+        <span class="text-base hidden sm:inline text-white">Upload Job</span>
       </router-link>
     </div>
 
@@ -55,7 +55,7 @@
         class="flex items-center gap-2 text-primary"
         @click="goToProfile"
       >
-        <font-awesome-icon :icon="['fas', 'user']" class="text-primary" />
+        <font-awesome-icon :icon="['fas', 'user']" class="text-primary sm:hidden" />
         <span class="text-base hidden sm:inline text-primary">Profile</span>
       </button>
       <button

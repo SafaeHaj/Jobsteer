@@ -17,7 +17,7 @@
       @submit.prevent="handleSubmit"
     >
       <!-- Job Information Section -->
-      <div class="space-y-6">
+      <div class="space-y-6 rounded-lg p-6 shadow-xl">
         <h3 class="text-xl font-bold text-primary">Job Information</h3>
 
         <!-- Job Title -->
@@ -93,7 +93,7 @@
       </div>
 
       <!-- Candidate Requirements Section -->
-      <div class="space-y-6">
+      <div class="space-y-6 rounded-lg p-6 shadow-xl">
         <h3 class="text-xl font-bold text-primary">Candidate Requirements</h3>
 
         <!-- Education -->
@@ -111,6 +111,7 @@
               v-for="(option, index) in educationOptions"
               :key="index"
               :value="option"
+              @change="addEducation()"
             >
               {{ option }}
             </option>
@@ -161,11 +162,11 @@
             <li
               v-for="(language, index) in job.languages"
               :key="index"
-              class="bg-accent text-white px-3 py-1 rounded flex items-center gap-2"
+              class="bg-primary text-white px-3 py-1 rounded flex items-center gap-2"
             >
               {{ language }}
-              <button class="text-danger font-bold" @click="removeLanguage(index)">
-                x
+              <button class="text-white font-bold" @click="removeLanguage(index)">
+                <font-awesome-icon :icon="['fas', 'xmark']" />
               </button>
             </li>
           </ul>
@@ -187,10 +188,10 @@
             <li
               v-for="(skill, index) in job.skills"
               :key="index"
-              class="bg-accent text-white px-3 py-1 rounded flex items-center gap-2"
+              class="bg-primary text-white px-3 py-1 rounded flex items-center gap-2"
             >
               {{ skill }}
-              <button class="text-danger font-bold" @click="removeSkill(index)">x</button>
+              <button class="text-white font-bold" @click="removeSkill(index)"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
             </li>
           </ul>
         </div>
@@ -210,30 +211,30 @@
             <li
               v-for="(experience, index) in job.experiences"
               :key="index"
-              class="bg-accent text-white px-3 py-1 rounded flex items-center gap-2"
+              class="bg-primary text-white px-3 py-1 rounded flex items-center gap-2"
             >
               {{ experience }}
-              <button class="text-danger font-bold" @click="removeExperience(index)">
-                x
+              <button class="text-white font-bold" @click="removeExperience(index)">
+                <font-awesome-icon :icon="['fas', 'xmark']" />
               </button>
             </li>
           </ul>
         </div>
       </div>
       <!-- Action Buttons Section -->
-      <div class="space-y-6">
+      <div class="space-y-6 rounded-lg p-6 shadow-xl">
         <h3 class="text-xl font-bold text-primary">Actions</h3>
         <div class="flex flex-col gap-4">
           <button
             type="button"
-            class="w-full bg-danger text-white px-6 py-3 rounded font-semibold hover:bg-opacity-80"
+            class="w-1/2 bg-danger text-white px-6 py-3 rounded hover:bg-opacity-80"
             @click="cancelForm"
           >
             Cancel
           </button>
           <button
             type="submit"
-            class="w-full bg-primary text-white px-6 py-3 rounded font-semibold hover:bg-secondary"
+            class="w-1/2 bg-primary text-white px-6 py-3 rounded hover:bg-secondary"
           >
             Create Job
           </button>
@@ -268,7 +269,6 @@ export default {
       languages: [],
       suggestions: [],
       locationError: false,
-      educationInput: "",
       languageInput: "",
       languageSuggestions: [],
       languageError: false,
@@ -355,7 +355,7 @@ export default {
       this.locationError = false;
     },
     addEducation() {
-      if (this.educationInput.trim()) {
+      if (this.educationInput.trim() && !this.job.education.includes(this.educationInput.trim())) {
         this.job.education.push(this.educationInput.trim());
         this.educationInput = "";
       }
