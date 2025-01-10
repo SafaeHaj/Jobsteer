@@ -67,7 +67,7 @@ export default {
         const token = response.data.token;
         localStorage.setItem("authToken", token);
         userStore.fetchDataFromApi();
-        this.$emit('login-success');
+        this.$router.push("/");
       } catch (error) {
         console.log("Login error:", error);
       } 

@@ -163,7 +163,7 @@ export default {
       const userStore = useUserStore();
       try {
         const response = await userStore.registerUser(formData);
-        this.$emit("register-success");
+        this.$router.push("/login");
         console.log("User registered:", response);
       } catch (error) {
         console.error("Registration error:", error);

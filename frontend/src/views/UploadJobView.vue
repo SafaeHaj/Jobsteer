@@ -360,7 +360,7 @@ export default {
         console.error("Error in job submission:", error);
         this.submissionError = `Failed to create job post: ${error.message}`;
       }
-      this.$router.push("/recruiter-dashboard");
+      this.$router.push("../recruiter-dashboard");
     },
     resetForm() {
       this.job = {
