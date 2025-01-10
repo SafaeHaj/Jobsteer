@@ -1,253 +1,183 @@
 <template>
-  <div class="min-h-screen bg-white text-text flex flex-col py-8 px-6">
-    <!-- Header Section -->
-    <div class="mb-6 flex justify-between items-center">
-      <h2 class="text-2xl font-bold text-primary">Upload Your Job Position</h2>
-      <router-link
-        to="../recruiter-dashboard"
-        class="text-secondary hover:text-accent font-semibold"
-      >
-        Go Back
-      </router-link>
-    </div>
-
-    <!-- Form Section -->
-    <form
-      class="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-8"
-      @submit.prevent="handleSubmit"
-    >
-      <!-- Job Information Section -->
-      <div class="space-y-6 rounded-lg p-6 shadow-xl">
-        <h3 class="text-xl font-bold text-primary">Job Information</h3>
-
-        <!-- Job Title -->
-        <div>
-          <label for="title" class="block text-sm font-medium text-secondary"
-            >Title</label
-          >
-          <input
+  <div class="flex sm:px-20">
+    <FormKit type="form" :actions="false" class="z-10 w-full max-w-lg height-800">
+      <FormKit type="multi-step" tab-style="progress" :allow-incomplete="false">
+        <FormKit type="step" name="jobInfo">
+          <FormKit
             type="text"
-            id="title"
+            name="title"
+            label="Title"
+            placeholder="Enter title"
             v-model="job.title"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-            placeholder="Enter job position title"
-            required
+            :validation="'required'"
           />
-        </div>
+          <FormKit type="group" name="location">
+            <div style="display: flex; gap: 10px; align-items: center relative">
+              <div style="flex: 1">
+                <FormKit
+                  type="text"
+                  name="country"
+                  label="Country"
+                  placeholder="Enter Country"
+                  v-model="job.country"
+                  @input="handleCountryInput"
+                  @focus="isHovered = true"
+                  @blur="hideOnBlur"
+                />
+                <ul class="suggestions" v-if="countrySuggestions.length && isHovered">
+                  <li
+                    v-for="(suggestion, index) in countrySuggestions"
+                    :key="index"
+                    @mousedown.prevent="selectCountrySuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </li>
+                </ul>
+              </div>
+              <div style="flex: 1">
+                <FormKit
+                  type="text"
+                  name="city"
+                  label="City"
+                  placeholder="Enter City"
+                  v-model="job.city"
+                  @input="handleCityInput"
+                  @focus="isHovered = true"
+                  @blur="hideOnBlur"
+                />
+                <ul class="suggestions" v-if="citySuggestions.length && isHovered">
+                  <li
+                    v-for="(suggestion, index) in citySuggestions"
+                    :key="index"
+                    @mousedown.prevent="selectCitySuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </FormKit>
 
-        <!-- Description -->
-        <div>
-          <label for="description" class="block text-sm font-medium text-secondary"
-            >Description</label
-          >
-          <textarea
-            id="description"
+          <FormKit
+            type="textarea"
+            name="description"
+            label="Description"
+            placeholder="Enter a short description of the position"
+            maxlength="300"
             v-model="job.description"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-            placeholder="Enter job description"
-          ></textarea>
-        </div>
-
-        <!-- Location -->
-        <div class="relative">
-          <label for="location" class="block text-sm font-medium text-secondary"
-            >Location</label
-          >
-          <textarea
-            id="location"
-            v-model="job.location"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-            placeholder="Enter City, Country"
-            @input="handleLocationInput"
-            @focus="isHovered = true"
-            @blur="hideOnBlur"
-          ></textarea>
-          <ul
-            v-if="suggestions.length && isHovered"
-            class="absolute z-10 bg-white border border-gray-300 mt-1 w-full rounded shadow-lg max-h-40 overflow-auto"
-          >
-            <li
-              v-for="(suggestion, index) in suggestions"
-              :key="index"
-              class="px-3 py-2 hover:bg-accent hover:text-white cursor-pointer"
-              @click="selectSuggestion(suggestion)"
-            >
-              {{ suggestion }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Contact -->
-        <div>
-          <label for="contact" class="block text-sm font-medium text-secondary"
-            >Contact</label
-          >
-          <input
-            type="text"
-            id="contact"
-            v-model="job.toApply"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-            placeholder="Enter contact information"
           />
-        </div>
-      </div>
-
-      <!-- Candidate Requirements Section -->
-      <div class="space-y-6 rounded-lg p-6 shadow-xl">
-        <h3 class="text-xl font-bold text-primary">Candidate Requirements</h3>
-
-        <!-- Education -->
-        <div>
-          <label for="education" class="block text-sm font-medium text-secondary"
-            >Education Level</label
-          >
-          <select
-            id="education"
-            v-model="educationInput"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-          >
-            <option value="" disabled>Select Education Level</option>
-            <option
-              v-for="(option, index) in educationOptions"
-              :key="index"
-              :value="option"
-              @change="addEducation()"
-            >
-              {{ option }}
-            </option>
-          </select>
-          <ul class="flex flex-wrap gap-2 mt-2">
-            <li
-              v-for="(edu, index) in job.education"
-              :key="index"
-              class="bg-accent text-white px-3 py-1 rounded flex items-center gap-2"
-            >
-              {{ edu }}
-              <button class="text-danger font-bold" @click="removeEducation(index)">
-                x
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Languages -->
-        <div class="relative">
-          <label for="languages" class="block text-sm font-medium text-secondary"
-            >Languages</label
-          >
-          <input
+          <FormKit
             type="text"
-            id="languages"
-            v-model="languageInput"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
+            name="contact"
+            label="Contact"
+            placeholder="e.g: contact@me.com"
+            v-model="job.toApply"
+          />
+        </FormKit>
+
+        <FormKit type="step" name="candidateRequirements">
+          <div style="display: flex; gap: 10px; align-items: center relative">
+            <div style="flex: 1">
+              <FormKit
+                type="select"
+                name="education"
+                label="Education"
+                v-model="educationLevel"
+                :options="[
+                  'None',
+                  'High School',
+                  'Associate',
+                  'Bachelor',
+                  'Master',
+                  'PhD',
+                ]"
+                placeholder="Select Level"
+              />
+            </div>
+            <div style="flex: 2">
+              <FormKit
+                type="text"
+                name="educationField"
+                label="Field of Study"
+                placeholder="Enter field"
+                v-model="educationField"
+              />
+            </div>
+          </div>
+          <FormKit
+            class="relative"
+            type="text"
+            name="languages"
+            label="Languages"
             placeholder="Enter a language"
+            v-model="languageInput"
             @input="handleLanguageInput"
             @focus="isHovered = true"
             @blur="hideOnBlur"
           />
-          <ul
-            v-if="languageSuggestions.length && isHovered"
-            class="absolute z-10 bg-white border border-gray-300 mt-1 w-full rounded shadow-lg max-h-40 overflow-auto"
-          >
+          <ul class="suggestions" v-if="languageSuggestions.length && isHovered">
             <li
               v-for="(suggestion, index) in languageSuggestions"
               :key="index"
-              class="px-3 py-2 hover:bg-accent hover:text-white cursor-pointer"
-              @click="addLanguage(suggestion)"
+              @mousedown.prevent="addLanguage(suggestion)"
             >
               {{ suggestion }}
             </li>
           </ul>
-          <ul class="flex flex-wrap gap-2 mt-2">
-            <li
-              v-for="(language, index) in job.languages"
-              :key="index"
-              class="bg-primary text-white px-3 py-1 rounded flex items-center gap-2"
-            >
+          <ul class="tag-list">
+            <li v-for="(language, index) in job.languages" :key="index">
               {{ language }}
-              <button class="text-white font-bold" @click="removeLanguage(index)">
+              <button @click="removeLanguage(index)">
                 <font-awesome-icon :icon="['fas', 'xmark']" />
               </button>
             </li>
           </ul>
-        </div>
-
-        <div>
-          <label for="soft-skills" class="block text-sm font-medium text-secondary"
-            >Soft Skills</label
-          >
-          <input
+          <FormKit
             type="text"
-            id="skills"
+            name="skills"
+            label="Skills"
+            placeholder="e.g Communication"
             v-model="skillInput"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-            placeholder="Add a skill"
             @keydown.enter.prevent="addSkill"
           />
-          <ul class="flex flex-wrap gap-2 mt-2">
-            <li
-              v-for="(skill, index) in job.skills"
-              :key="index"
-              class="bg-primary text-white px-3 py-1 rounded flex items-center gap-2"
-            >
+          <ul class="tag-list">
+            <li v-for="(skill, index) in job.skills" :key="index">
               {{ skill }}
-              <button class="text-white font-bold" @click="removeSkill(index)"><font-awesome-icon :icon="['fas', 'xmark']" /></button>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <label for="hard-skills" class="block text-sm font-medium text-secondary"
-            >Hard Skills</label
-          >
-          <input
-            type="text"
-            id="skills"
-            v-model="experienceInput"
-            class="w-full p-3 rounded border border-gray-300 focus:ring focus:ring-accent"
-            placeholder="Add an experience"
-            @keydown.enter.prevent="addExperience"
-          />
-          <ul class="flex flex-wrap gap-2 mt-2">
-            <li
-              v-for="(experience, index) in job.experiences"
-              :key="index"
-              class="bg-primary text-white px-3 py-1 rounded flex items-center gap-2"
-            >
-              {{ experience }}
-              <button class="text-white font-bold" @click="removeExperience(index)">
+              <button @click="removeSkill(index)">
                 <font-awesome-icon :icon="['fas', 'xmark']" />
               </button>
             </li>
           </ul>
-        </div>
-      </div>
-      <!-- Action Buttons Section -->
-      <div class="space-y-6 rounded-lg p-6 shadow-xl">
-        <h3 class="text-xl font-bold text-primary">Actions</h3>
-        <div class="flex flex-col gap-4">
-          <button
-            type="button"
-            class="w-1/2 bg-danger text-white px-6 py-3 rounded hover:bg-opacity-80"
-            @click="cancelForm"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="w-1/2 bg-primary text-white px-6 py-3 rounded hover:bg-secondary"
-          >
-            Create Job
-          </button>
-        </div>
-      </div>
-    </form>
+          <FormKit
+            type="text"
+            name="experience"
+            label="Experience"
+            placeholder="e.g Java, Frontend"
+            v-model="experienceInput"
+            @keydown.enter.prevent="addExperience"
+          />
+          <ul class="tag-list">
+            <li v-for="(experience, index) in job.experiences" :key="index">
+              {{ experience }}
+              <button @click="removeExperience(index)">
+                <font-awesome-icon :icon="['fas', 'xmark']" />
+              </button>
+            </li>
+          </ul>
+          <template #stepNext>
+            <FormKit type="submit" label="Create Job" />
+          </template>
+        </FormKit>
+      </FormKit>
+    </FormKit>
+    <div class="bg-primary w-1/2 h-screen absolute right-0 hidden md:block z-[-1]"></div>
   </div>
 </template>
 
 <script>
 import { useJobPostStore } from "@/store/jobpostStore.js";
 import { useUserStore } from "@/store/user";
-import { City, Country } from "country-state-city";
+import { City, State, Country } from "country-state-city";
 import ISO6391 from "iso-639-1";
 
 export default {
@@ -257,17 +187,19 @@ export default {
       job: {
         title: "",
         description: "",
-        location: "",
+        city: "",
+        country: "",
         toApply: "",
         education: [],
         languages: [],
         skills: [],
         experiences: [],
       },
-      educationOptions: ["None", "High School", "Associate", "Bachelor", "Master", "PhD"],
-      locations: [],
+      countries: [],
+      countrySuggestions: [],
+      citySuggestions: [],
+      countryCityMap: {},
       languages: [],
-      suggestions: [],
       locationError: false,
       languageInput: "",
       languageSuggestions: [],
@@ -275,42 +207,13 @@ export default {
       skillInput: "",
       experienceInput: "",
       isHovered: false,
+      educationField: "",
+      educationLevel: "",
     };
   },
   mounted() {
-    const cities = City.getAllCities();
-    const countries = Country.getAllCountries();
+    this.countries = Country.getAllCountries();
     this.languages = ISO6391.getAllNames();
-    this.locationsMap = new Map();
-
-    cities.forEach((city) => {
-      const country =
-        countries.find((c) => c.isoCode === city.countryCode)?.name || "Unknown";
-      const cityKey = city.name.toLowerCase();
-      const countryKey = country.toLowerCase();
-
-      if (!this.locationsMap.has(cityKey)) {
-        this.locationsMap.set(cityKey, new Set());
-      }
-
-      this.locationsMap.get(cityKey).add(countryKey);
-    });
-
-    this.locationsMap.forEach((countries, cityKey) => {
-      this.locationsMap.set(cityKey, Array.from(countries));
-    });
-
-    this.flatLocations = Array.from(
-      this.locationsMap.entries()
-    ).flatMap(([city, countries]) =>
-      countries.map(
-        (country) =>
-          `${city.charAt(0).toUpperCase() + city.slice(1)}, ${
-            country.charAt(0).toUpperCase() + country.slice(1)
-          }`
-      )
-    );
-    this.loading = false;
   },
   computed: {
     user() {
@@ -326,42 +229,58 @@ export default {
         timeout = setTimeout(() => fn.apply(this, args), delay);
       };
     },
-    handleLocationInput() {
+    handleCountryInput() {
       this.debounce(() => {
-        const input = this.job.location.trim().toLowerCase();
+        const input = this.job.country.trim().toLowerCase();
         if (!input) {
-          this.suggestions = [];
+          this.countrySuggestions = [];
           this.locationError = false;
           return;
         }
+        this.countrySuggestions = this.countries
+          .filter((country) => country.name.toLowerCase().includes(input))
+          .map((country) => country.name);
 
-        const [cityInput = "", countryInput = ""] = input.split(",").map((s) => s.trim());
-        const citySuggestions = this.locationsMap.get(cityInput) || [];
-
-        if (countryInput) {
-          this.suggestions = citySuggestions
-            .filter((country) => country.includes(countryInput))
-            .map((country) => `${cityInput}, ${country}`);
-        } else {
-          this.suggestions = citySuggestions.map((country) => `${cityInput}, ${country}`);
+        this.locationError = this.countrySuggestions.length === 0;
+      }, 200)();
+    },
+    handleCityInput() {
+      this.debounce(() => {
+        const input = this.job.city.trim().toLowerCase();
+        if (!input) {
+          this.citySuggestions = [];
+          this.locationError = false;
+          return;
+        }
+        if (!this.job.country) {
+          this.locationError = true;
+          return;
         }
 
-        this.locationError = this.suggestions.length === 0;
-      }, 300)();
+        const selectedCountry = this.countries.find(
+          (country) => country.name === this.job.country
+        );
+        if (selectedCountry) {
+          const countryCode = selectedCountry.isoCode;
+          const cities = State.getStatesOfCountry(countryCode).flatMap((state) =>
+            City.getCitiesOfState(countryCode, state.isoCode).map((city) => city.name)
+          );
+          this.citySuggestions = cities.filter((city) =>
+            city.toLowerCase().includes(input)
+          );
+        }
+        this.locationError = this.citySuggestions.length === 0;
+      }, 200)();
     },
-    selectSuggestion(suggestion) {
-      this.job.location = suggestion;
-      this.suggestions = [];
+    selectCountrySuggestion(suggestion) {
+      this.job.country = suggestion;
+      this.countrySuggestions = [];
       this.locationError = false;
     },
-    addEducation() {
-      if (this.educationInput.trim() && !this.job.education.includes(this.educationInput.trim())) {
-        this.job.education.push(this.educationInput.trim());
-        this.educationInput = "";
-      }
-    },
-    removeEducation(index) {
-      this.job.education.splice(index, 1);
+    selectCitySuggestion(suggestion) {
+      this.job.city = suggestion;
+      this.citySuggestions = [];
+      this.locationError = false;
     },
     handleLanguageInput() {
       const input = this.languageInput.trim().toLowerCase();
@@ -406,12 +325,12 @@ export default {
     },
     async handleFormSubmission() {
       const jobPostStore = useJobPostStore();
-
+      this.job.education = [this.educationLevel, this.educationField];
       try {
         const jobPostData = {
           title: this.job.title,
           recruiterId: this.user.id,
-          location: this.job.location,
+          location: `${this.job.city}, ${this.job.country}`,
           requirements: [],
           description: this.job.description,
           toApply: this.job.toApply,
@@ -441,10 +360,6 @@ export default {
         console.error("Error in job submission:", error);
         this.submissionError = `Failed to create job post: ${error.message}`;
       }
-      this.$router.push("/recruiter-dashboard");
-    },
-    cancelForm() {
-      this.resetForm();
       this.$router.push("/recruiter-dashboard");
     },
     resetForm() {

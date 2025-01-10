@@ -4,12 +4,12 @@
 
 /* General Font Styling */
 body {
-  @apply font-ui bg-background text-text antialiased;
+  @apply font-ui bg-white text-text antialiased;
 }
 
 /* Navigation Links */
 .nav-link {
-  @apply text-primary hover:text-accent flex items-center gap-2 text-sm font-medium transition-colors;
+  @apply text-white hover:text-accent flex items-center gap-2 text-sm font-medium transition-colors;
 }
 
 /* Buttons */
@@ -21,8 +21,8 @@ body {
   @apply bg-primary text-white hover:bg-accent;
 }
 
-.btn-secondary {
-  @apply bg-secondary text-white hover:bg-accent;
+.btn-accent {
+  @apply bg-accent text-white hover:bg-accent;
 }
 
 .btn-danger {
@@ -42,16 +42,16 @@ body {
 .input-group input,
 .input-group select,
 .input-group textarea {
-  @apply w-full border border-secondary rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary;
+  @apply w-full border border-accent rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary;
 }
 
 /* Suggestions List */
 .suggestions {
-  @apply bg-white border border-secondary rounded-md shadow-lg p-2 mt-1 max-h-40 overflow-y-auto;
+  @apply absolute z-10 bg-white border border-accent rounded-md shadow-lg p-1 mt-1 max-h-40 overflow-y-auto w-max;
 }
 
 .suggestions li {
-  @apply p-2 cursor-pointer hover:bg-secondary hover:text-white;
+  @apply p-2 hover:bg-accent hover:text-white;
 }
 
 /* Tags */
@@ -59,8 +59,8 @@ body {
   @apply flex flex-wrap gap-2 mt-2;
 }
 
-.tag {
-  @apply bg-primary text-white px-3 py-1 rounded-full text-sm flex items-center;
+.tag-list li {
+  @apply bg-primary text-white px-3 py-2 rounded-full text-sm flex items-center;
 }
 
 .delete-button {
@@ -69,7 +69,7 @@ body {
 
 /* Dashboard Layout */
 .dashboard-container {
-  @apply bg-background min-h-screen p-6 flex flex-col gap-6;
+  @apply bg-primary min-h-screen p-6 flex flex-col gap-6;
 }
 
 .dashboard-header {

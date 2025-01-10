@@ -10,12 +10,10 @@ module.exports = {
         ui: ['Roboto', 'Arial', 'sans-serif'], 
       },
       colors: {
-        primary: '#813695',
-        secondary: '#6b2e7a',
-        accent: '#ce90e2',
-        danger: '#381141',
-        background: '#ffff',
-        text: '#0b060d',
+        primary: '#5D2A68',
+        accent: '#B786C8',
+        danger: '#cd1c18',
+        text: '#5D2A68',
       },
       spacing: {
         formPadding: '32px', // Reusable spacing variable

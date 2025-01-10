@@ -1,12 +1,7 @@
 <template>
-  <LoadingAnimation />
   <div class="dashboard-container">
     <div class="dashboard-header">
       <h2 class="dashboard-title">Job Posts for {{ user.companyName }}</h2>
-      <router-link @click="startLoading" to="recruiter-dashboard/post-job" class="btn btn-secondary">
-        <font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />
-        Create Job Post
-      </router-link>
     </div>
     <!-- Job Posts Section -->
     <div class="job-posts-section">
@@ -28,13 +23,11 @@
 import RecruiterJobComponent from "@/components/RecruiterJobComponent.vue";
 import { useUserStore } from "@/store/user.js";
 import { useJobPostStore } from "@/store/jobpostStore.js";
-import { LoadingAnimation } from "@/components/LoadingAnimation.vue";
 
 export default {
   name: "RecruiterDashboardView",
   components: {
     RecruiterJobComponent,
-    LoadingAnimation
   },
   data() {
     return {

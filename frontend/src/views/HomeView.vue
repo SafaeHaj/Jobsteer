@@ -1,14 +1,14 @@
 <template>
-  <div class="flex items-center gap-12 my-10 px-10">
-    <div class="left w-1/2">
-      <h2 class="text-5xl text-gray-900 font-semibold mb-8">Connect Talent with <br> 
-        <span class="text-primary">Opportunity</span>
+  <div class="flex content-center items-center justify-center gap-12 my-10 px-4">
+    <div class="left w-1/2 flex flex-col mt-30 my-auto">
+      <h2 class=" text-gray-900 font-semibold mb-8 text-5xl">Connect Talent with <br> 
+        <span class="text-primary mt-1">Opportunity</span>
       </h2>
-      <p class="text-lg text-gray-600 font-normal mb-12">
+      <p class="text-lg text-gray-400 font-normal mb-8 sm:text-xl italic ml-0">
         Whether you're looking for the perfect candidate or the ideal job, we help bridge the gap.
       </p>
     </div>
-    <img src="../assets/asset.svg" alt="Illustration" class="w-full max-w-sm rounded-lg">
+    <img src="../assets/purple.svg" alt="Illustration" class="w-full max-w-sm rounded-lg hidden mb-30 sm:block">
   </div>
 </template>
 
