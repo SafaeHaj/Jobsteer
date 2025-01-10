@@ -106,20 +106,38 @@ public interface JobPostRepository extends JpaRepository<JobPost, Integer> {
 }
 ```
 
-## 4. Testing Implementation
+# 4. Testing Strategy and Implementation
 
-### 4.1 Authentication Testing
+## 4.1 Testing Methodology
 
+Our testing implementation follows a systematic approach with three key aspects:
+
+### Test Organization
+* Controller layer tests for API endpoints
+* Service layer tests for business logic
+* Repository layer integration tests
+* Security testing across all layers
+
+### Testing Best Practices Implementation
+
+1. **Proper Mocking and Dependency Injection**
 ```java
-@Test
-public void loginUser_Success() throws Exception {
-    mockMvc.perform(post("/api/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.token").exists());
-}
+@MockBean
+private JobPostService jobPostService;
+@MockBean
+private AuthenticationManager authenticationManager;
+```
 
+2. **Security Context Testing**
+```java
+@WithMockUser(roles = "JOBSEEKER")
+public void uploadResume_Success() {
+    // Test with security context
+}
+```
+
+3. **Comprehensive Error Handling**
+```java
 @Test
 public void loginUser_InvalidCredentials() throws Exception {
     mockMvc.perform(post("/api/auth/login")
@@ -129,30 +147,72 @@ public void loginUser_InvalidCredentials() throws Exception {
 }
 ```
 
-**Key aspects tested:**
-* User authentication flow
-* JWT token generation
-* Invalid credentials handling
-* Security context management
+### Test Coverage by Component
 
-### 4.2 Job Post Management Testing
+1. **Authentication System**
+* Login success/failure scenarios
+* JWT token validation
+* Role-based access control
+* Registration validation
 
+2. **Job Post Management**
+* CRUD operations validation
+* Permission checks
+* Data validation
+* Resource existence verification
+
+3. **Resume Management**
+* File upload validation
+* Access control checks
+* Data persistence verification
+* Error handling scenarios
+
+## 4.2 Key Test Implementations
+
+Each test class follows a clear pattern:
+* Setup of mock dependencies
+* Definition of test data
+* Execution of the test scenario
+* Verification of results and side effects
+
+Example of this pattern:
 ```java
 @Test
-public void createJobPost_Success() throws Exception {
-    mockMvc.perform(post("/api/jobpost/internal")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+@WithMockUser(roles = "JOBSEEKER")
+public void uploadResume_Success() throws Exception {
+    // 1. Setup
+    MockMultipartFile file = new MockMultipartFile(
+        "file", "resume.pdf",
+        MediaType.APPLICATION_PDF_VALUE,
+        "PDF content".getBytes()
+    );
+
+    // 2. Test Data
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", "success");
+    response.put("resumeId", 1);
+
+    // 3. Mock Setup
+    when(resumeService.uploadResume(anyLong(), any()))
+        .thenReturn(ResponseEntity.ok(response));
+
+    // 4. Execution & Verification
+    mockMvc.perform(multipart("/api/resume/upload/{jobSeekerId}", jobSeekerId)
+            .file(file))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title").value("Software Engineer"));
+            .andExpect(jsonPath("$.status").value("success"));
 }
 ```
 
-**Features tested:**
-* Job creation and validation
-* Resource deletion
-* Error handling
-* Data persistence verification
+## 4.3 Testing Infrastructure
+
+Our testing infrastructure includes:
+* MockMvc for API testing
+* JUnit 5 as the testing framework
+* Mockito for mocking dependencies
+* Spring Security Test for security context
+* Custom test configurations for different scenarios
+
 
 ## 5. Security Implementation
 
@@ -202,28 +262,6 @@ public class Resume implements Matchable {
     
     @OneToOne(cascade = CascadeType.ALL)
     private JobSeeker jobSeeker;
-}
-```
-
-### 6.2 Testing Best Practices
-
-**Proper Mocking:**
-```java
-@MockBean
-private JobPostService jobPostService;
-```
-
-**Security Testing:**
-```java
-@WithMockUser(roles = "JOBSEEKER")
-public void testSecuredEndpoint() { ... }
-```
-
-**Error Handling:**
-```java
-@ExceptionHandler(EntityNotFoundException.class)
-public ResponseEntity<String> handleNotFound(EntityNotFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 }
 ```
 
