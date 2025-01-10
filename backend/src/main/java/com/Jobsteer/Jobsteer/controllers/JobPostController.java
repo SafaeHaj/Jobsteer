@@ -27,7 +27,7 @@ public class JobPostController {
     }
 
     @GetMapping("/recruiter/{recruiterId}")
-    public ResponseEntity<List<JobPost>> getJobPostsByRecruiter(@PathVariable Long recruiterId) {
+    public ResponseEntity<List<JobPost>> getJobPostsByRecruiter(@PathVariable("recruiterId") Long recruiterId) {
         List<JobPost> jobPosts = jobPostService.findByRecruiterId(recruiterId);
         return ResponseEntity.ok(jobPosts);
     }

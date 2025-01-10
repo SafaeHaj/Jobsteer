@@ -30,4 +30,27 @@ public class RegistrationRequest {
 	public String getCompany() {
 		return company;
 	}
+	
+	public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    public void setCompany(String company) {
+        this.company = company;
+    }
+	
 }

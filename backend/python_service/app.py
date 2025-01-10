@@ -7,7 +7,7 @@ import tempfile
 
 app = Flask(__name__)
 
-os.environ['GROQ_API_KEY'] = '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'
+os.environ['GROQ_API_KEY'] = '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'
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def translate(text):
@@ -30,7 +30,7 @@ def parsingExperienceType(resume_text, ExperienceType):
             "role": "user",
             "content": prompt,
         }],
-        model="llama-3.3-70b-versatile",
+        model="llama-3.3-70b-specdec",
         temperature=0.1,  # Lower temperature for more focused extraction
         max_tokens=1000
     )
@@ -55,7 +55,7 @@ def parsingOutputFormatting(resume_text, ExperienceType):
             "role": "user",
             "content": prompt,
         }],
-        model="llama-3.3-70b-versatile",
+        model="llama-3.3-70b-specdec",
         temperature=0.1
     )
     return response.choices[0].message.content.strip()
