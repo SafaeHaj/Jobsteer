@@ -39,23 +39,6 @@ export default {
     overflow: hidden; 
 }
 
-.modal-content {
-  overflow-y: scroll;
-  background: #fff;
-  max-height: 80vh;
-  padding:20px 40px;
-  border-radius: 20px;
-}
-
-.modal-content::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Webkit browsers */
-}
-
-.modal-content {
-  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-}
-
 .close-button {
     position: absolute;
     top: 10px;
@@ -65,11 +48,6 @@ export default {
     font-size: 20px;
     cursor: pointer;
     color: #333;
-}
-
-/* Prevent Background Scroll */
-body.modal-active {
-    overflow: hidden; /* Disable scrolling */
 }
 
 </style>

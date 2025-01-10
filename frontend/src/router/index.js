@@ -5,12 +5,14 @@ import UploadResumeView from '@/views/UploadResumeView.vue';
 import ProfileView from '@/views/ProfileView.vue';
 import RecruiterDashboardView from '@/views/RecruiterDashboardView.vue';
 import JobDetailView from '@/views/JobDetailView.vue';
+import UploadJobView from '@/views/UploadJobView.vue';
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
   { path: '/upload-resume', name: 'upload-resume', component: UploadResumeView, meta: { requiresAuth: true, requiredRole: 'jobseeker' } },
   { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
-  { path: '/recruiter-dashboard', name: 'recruiter-dashboard', component: RecruiterDashboardView, meta: { requiresAuth: true, requiredRole: 'recruiter' } },
+  { path: '/recruiter-dashboard', name: 'recruiter-dashboard', component: RecruiterDashboardView, meta: { requiresAuth: true, requiredRole: 'recruiter' }},
+  { path: '/recruiter-dashboard/post-job', name: 'post-job', component: UploadJobView, meta: { requiresAuth: true, requiredRole: 'recruiter' }},
   { path: '/job/:jobId', name: 'job-detail', component: JobDetailView, meta: { requiresAuth: true, requiredRole: 'recruiter' }},
 ];
 

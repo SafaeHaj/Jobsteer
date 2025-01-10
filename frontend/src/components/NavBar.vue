@@ -1,42 +1,82 @@
 <template>
-  <div class="navbar">
-    <div class="logo">
-      <router-link to="/"><img src="../assets/asset.svg" alt="Logo"></router-link>
-      <p>JOBSTEER</p>
+  <nav class="bg-white shadow-md rounded-md px-6 py-3 flex justify-between items-center flex-wrap">
+    <!-- Logo -->
+    <div class="flex items-center gap-2">
+      <router-link to="/">
+        <img src="../assets/asset.svg" alt="Logo" class="h-10" />
+      </router-link>
+      <span class="text-lg font-bold text-primary hidden sm:inline">JOBSTEER</span>
     </div>
-    <div class="navlinks-main">
-      <router-link to="/" class="navlink">Home</router-link>
-      <router-link v-if="isLoggedIn && user.role=='jobseeker'" to="/upload-resume" class="navlink">Upload Resume</router-link>
-      <router-link v-else-if="isLoggedIn && user.role=='recruiter'" to="/recruiter-dashboard" class="navlink">Upload Job</router-link>
+
+    <!-- Main Navigation Links -->
+    <div class="flex items-center gap-6">
+      <router-link to="/" class="nav-link text-primary">
+        <font-awesome-icon :icon="['fas', 'house']" class="sm:hidden mr-2 text-primary" />
+        <span class="text-base hidden sm:inline text-primary">Home</span>
+      </router-link>
+      <router-link
+        v-if="isLoggedIn && user.role === 'jobseeker'"
+        to="/upload-resume"
+        class="nav-link text-primary bg-primary text-white px-4 py-2 rounded-full hover:bg-secondary"
+      >
+        <font-awesome-icon :icon="['fas', 'upload']" class="sm:hidden mr-2 text-white" />
+        <span class="text-base hidden sm:inline text-white">Upload Resume</span>
+      </router-link>
+      <router-link
+        v-else-if="isLoggedIn && user.role === 'recruiter'"
+        to="/recruiter-dashboard"
+        class="nav-link text-primary bg-primary text-white px-4 py-2 rounded-full hover:bg-secondary"
+      >
+        <font-awesome-icon :icon="['fas', 'upload']" class="sm:hidden mr-2 text-white" />
+        <span class="text-base hidden sm:inline text-white">Upload Job</span>
+      </router-link>
     </div>
-    <div class="navlinks-side">
-      <button v-if="!isLoggedIn" class="nav-button login" @click="showLoginModal = true">Login</button>
-      <button v-if="!isLoggedIn" class="nav-button register" @click="showRegisterModal = true">Register</button>
-      <button v-if="isLoggedIn" class="nav-button profile" @click="goToProfile">Profile</button>
-      <button v-if="isLoggedIn" class="nav-button logout" @click="handleSignOut">Sign Out</button>
-      <!-- Login Modal -->
-      <VModal :isVisible="showLoginModal" @close="showLoginModal = false">
-        <UserLogin @login-success="handleLoginSuccess" />
-      </VModal>
-      <!-- Register Modal -->
-      <VModal :isVisible="showRegisterModal" @close="showRegisterModal = false">
-        <UserSignup @register-success="handleRegisterSuccess" />
-      </VModal>
+
+    <!-- User Actions -->
+    <div class="flex items-center gap-4">
+      <button
+        v-if="!isLoggedIn"
+        class="btn btn-secondary text-primary"
+        @click="showLoginModal = true"
+      >
+        <span class="hidden sm:inline text-primary">Login</span>
+        <font-awesome-icon :icon="['fas', 'sign-in-alt']" class="sm:hidden text-primary" />
+      </button>
+      <button
+        v-if="!isLoggedIn"
+        class="btn btn-primary text-primary"
+        @click="showRegisterModal = true"
+      >
+        <span class="hidden sm:inline text-primary">Register</span>
+        <font-awesome-icon :icon="['fas', 'user-plus']" class="sm:hidden text-primary" />
+      </button>
+      <button
+        v-if="isLoggedIn"
+        class="flex items-center gap-2 text-primary"
+        @click="goToProfile"
+      >
+        <font-awesome-icon :icon="['fas', 'user']" class="text-primary sm:hidden" />
+        <span class="text-base hidden sm:inline text-primary">Profile</span>
+      </button>
+      <button
+        v-if="isLoggedIn"
+        class="flex items-center gap-2 text-primary"
+        @click="handleSignOut"
+      >
+        <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="text-primary" />
+        <span class="text-base hidden sm:inline text-primary">Logout</span>
+      </button>
     </div>
-  </div>
+  </nav>
 </template>
 
 <script>
-import VModal from './VModal.vue';
-import UserLogin from './UserLogin.vue';
-import UserSignup from './UserSignup.vue';
-import { useUserStore } from '../store/user';
+import { useUserStore } from "../store/user";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export default {
   components: {
-    VModal,
-    UserLogin,
-    UserSignup,
+    FontAwesomeIcon,
   },
   data() {
     return {
@@ -51,140 +91,19 @@ export default {
     },
     user() {
       const userStore = useUserStore();
-      console.log("user: ",userStore.user);
       return userStore.user;
-    }
-  }
-  ,
+    },
+  },
   methods: {
-    handleLoginSuccess() {
-      this.showLoginModal = false;
-      this.$router.push('/upload-resume');
-    },
-    handleRegisterSuccess() {
-      this.showRegisterModal = false;
-      this.showLoginModal = true;
-    },
-    goToProfile() {
-      this.$router.push('/profile');
-    },
     handleSignOut() {
       const userStore = useUserStore();
       userStore.logoutUser();
-      this.$router.push("/"); 
-    }
-  }
+      this.$router.push("/");
+    },
+    goToProfile() {
+      this.$router.push("/profile");
+    },
+  },
 };
 </script>
 
-
-<style scoped>
-/* General Navbar Styling */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  padding: 15px 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-/* Logo */
-.logo img {
-  height: 40px;
-  object-fit: contain;
-}
-
-.logo {
-  display: flex;
-  gap: 4px;
-  color: #845AA4;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
-/* Main navigation links */
-.navlinks-main {
-  display: flex;
-  gap: 25px;
-}
-
-.navlink {
-  text-decoration: none;
-  color: #845AA4;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  position: relative;
-  padding: 8px 12px;
-}
-
-.navlink:hover {
-  color: #5d3e7e;
-}
-
-.navlinks-side {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.nav-button {
-  font-size: 16px;
-  font-weight: 500;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.nav-button.login {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.nav-button.login:hover {
-  background-color: #d6d6d6;
-}
-
-.nav-button.register {
-  background-color: #845AA4;
-  color: white;
-}
-
-.nav-button.logout {
-  background-color: #5d3e7e;
-  color: #fff;
-}
-
-.nav-button.register:hover {
-  background-color: #5d3e7e;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .navlinks-main {
-    display: none;
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .logo img {
-    height: 35px;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-button {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-
-  .navlink {
-    font-size: 14px;
-  }
-}
-</style>
